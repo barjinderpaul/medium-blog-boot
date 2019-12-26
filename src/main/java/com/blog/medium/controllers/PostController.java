@@ -1,6 +1,8 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
+import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.PostService;
 import com.blog.medium.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -19,18 +22,50 @@ public class PostController {
     @Autowired
     PostService postService;
 
+    @Autowired
+    CategoryService categoryService;
+
     @RequestMapping(value = {"/","/posts"}, method= RequestMethod.GET)
     public ModelAndView getBlogPosts(){
 
        List<Post> allPosts = postService.getAllPosts();
+       List<Category> categories = categoryService.getAllTags();
+        System.out.println("SIZE ++++++ " + categories.size());
 
        ModelAndView modelAndView = new ModelAndView();
        modelAndView.setViewName("blogPosts");
-       modelAndView.addObject("name","Hello mvc");
+       modelAndView.addObject("allCategories",categories);
        modelAndView.addObject("allPosts",allPosts);
 
        return modelAndView;
     }
+
+    @RequestMapping(value = {"/posts/sort/publish"}, method= RequestMethod.GET)
+    public ModelAndView getBlogPostsSortedByPublishDate(){
+
+        List<Post> allPosts = postService.getAllPostsSortedByPublishDate();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts",allPosts);
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = {"/posts/sort/update"}, method= RequestMethod.GET)
+    public ModelAndView getBlogPostsSortedByUpdationDate(){
+
+        List<Post> allPosts = postService.getAllPostsSortedByLastUpdate();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts",allPosts);
+
+        return modelAndView;
+    }
+
+
+
 
     @RequestMapping(value = "posts/add",method = RequestMethod.GET)
     public ModelAndView redirectToCreatePost(){
@@ -43,10 +78,13 @@ public class PostController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "posts/add",method = RequestMethod.POST)
-    public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content) {
 
-        Long post_id = postService.addPost(title,content);
+
+    @RequestMapping(value = "posts/add",method = RequestMethod.POST)
+    public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categories") String[] categories) {
+
+        List<String> categoriesList =Arrays.asList(categories);
+        Long post_id = postService.addPost(title,content,categoriesList);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("createPost");
@@ -58,6 +96,8 @@ public class PostController {
 
         return modelAndView;
     }
+
+
 
     @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
     public ModelAndView getPost(@PathVariable("id") Long id) {

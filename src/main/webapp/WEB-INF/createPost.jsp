@@ -73,7 +73,35 @@
     <label for="content">Enter content</label>
     <textarea id="content" placeholder="Enter content" class="md-textarea form-control" rows="10" name="content" required><c:if test="${customAction != 'addPost'}">${fn:trim(content)}</c:if></textarea>
 </div>
-<button type="submit" class="btn btn-primary">Save Post</button>
+
+<c:if test="${customAction == 'addPost'}">
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="customCheck1" name="categories" value="java">
+                    <label class="custom-control-label" for="customCheck1">Java</label>
+                </div>
+
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="customCheck2" name="categories" value="spring">
+                    <label class="custom-control-label" for="customCheck2">Spring</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="customCheck3" name="categories" value="sql">
+                    <label class="custom-control-label" for="customCheck3">Sql</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="customCheck4" name="categories" value="jsp">
+                    <label class="custom-control-label" for="customCheck4">Jsp</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</c:if>
+
+
+    <button type="submit" class="btn btn-primary">Save Post</button>
 </form>
 
 </div>

@@ -49,7 +49,20 @@
 </nav>
 <br>
 <div class="container">
-    <h1>Welcome to Blog</h1>
+    <h1>Welcome to Blog </h1>
+    <p>Sort by :
+        <span><a class="btn btn-primary m-auto" href="/posts/sort/update">Last Updation</a></span>
+        <span><a class="btn btn-primary m-auto" href="/posts/sort/publish">Last Published</a></span>
+    </p>
+    <p>Filter by :
+        <c:forEach items="${allCategories}" var="list">
+
+           <span> <a href="posts/tag/${list.categoryName}/${list.category_id}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
+
+
+        </c:forEach>
+
+    </p>
     <br>
     <c:forEach items="${allPosts}" var="list">
         <div class="card">
