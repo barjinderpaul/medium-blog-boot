@@ -54,14 +54,15 @@
         <span><a class="btn btn-primary m-auto" href="/posts/sort/update">Last Updation</a></span>
         <span><a class="btn btn-primary m-auto" href="/posts/sort/publish">Last Published</a></span>
     </p>
-    <p>Filter by :
+    <p>Filter by Tag:
         <c:forEach items="${allCategories}" var="list">
-
            <span> <a href="posts/tag/${list.categoryName}/${list.category_id}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
-
-
         </c:forEach>
-
+    </p>
+    <p>Filter by Author:
+        <c:forEach items="${allUsers}" var="list">
+            <span> <a href="posts/user/${list.username}/${list.id}" class="btn btn-outline-primary">${list.username}</a> </span>
+        </c:forEach>
     </p>
     <br>
     <c:forEach items="${allPosts}" var="list">

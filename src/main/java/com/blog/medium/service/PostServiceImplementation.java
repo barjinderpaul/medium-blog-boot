@@ -56,14 +56,13 @@ public class PostServiceImplementation implements PostService {
 
     public  Long addPost(String title, String content, List<String> categories) {
 
-            User user = new User();
+/*            User user = new User();
             user.setEmail("admin@admin.com");
             user.setUsername("admin");
-            user.setPassword("admin");
+            user.setPassword("admin");*/
 
- /*       Optional<User> userOptional = userRepository.findById(1L);
+        Optional<User> userOptional = userRepository.findById(1L);
         User user = userOptional.get();
-*/
         Post post = new Post();
         post.setPublishedAt(LocalDateTime.now());
         post.setTitle(title);

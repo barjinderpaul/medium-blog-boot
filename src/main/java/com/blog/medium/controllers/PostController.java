@@ -2,9 +2,11 @@ package com.blog.medium.controllers;
 
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
+import com.blog.medium.model.User;
 import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.PostService;
 import com.blog.medium.model.Post;
+import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,9 @@ public class PostController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    UserService userService;
+
     @RequestMapping(value = {"/","/posts"}, method= RequestMethod.GET)
     public ModelAndView getBlogPosts(){
 
@@ -32,10 +37,13 @@ public class PostController {
        List<Category> categories = categoryService.getAllTags();
         System.out.println("SIZE ++++++ " + categories.size());
 
+        List<User> users = userService.getAllUsers();
+
        ModelAndView modelAndView = new ModelAndView();
        modelAndView.setViewName("blogPosts");
        modelAndView.addObject("allCategories",categories);
        modelAndView.addObject("allPosts",allPosts);
+       modelAndView.addObject("allUsers",users);
 
        return modelAndView;
     }
