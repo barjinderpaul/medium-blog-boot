@@ -8,11 +8,11 @@ import com.blog.medium.service.PostService;
 import com.blog.medium.model.Post;
 import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -201,6 +201,28 @@ public class PostController {
 
         postService.updatePost(id,title,content,categoriesList);
         return "redirect:/posts/{id}";
+    }
+
+    /*
+    * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
+    * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
+    * */
+    @RequestMapping(value = "/posts/filter", params = {"orderBy", "direction", "page", "size"}, method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPosts(@RequestParam("orderBy") String orderBy, @RequestParam("direction") String direction, @RequestParam("page") String page, @RequestParam("size") String size) {
+
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(size);
+        List<Post> list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
+        for (Post post : list) {
+            System.out.println("POST++++++ " + post.getId() + " " + post.getTitle() + " " + post.getContent() + " ");
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts",list);
+
+        return modelAndView;
     }
 
 }

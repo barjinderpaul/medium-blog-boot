@@ -7,9 +7,7 @@ import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -25,7 +23,7 @@ public class CategoryController {
     UserService userService;
 
     @RequestMapping(value = {"/posts/tag/{categoryName}/{categoryId}"}, method= RequestMethod.GET)
-    public ModelAndView getBlogPosts(@PathVariable("categoryName") String categoryName, @PathVariable("categoryId") String categoryId){
+    public ModelAndView getBlogPosts( @PathVariable("categoryId") String categoryId){
 
         Long category_id = Long.parseLong(categoryId);
         List<Category> categories = categoryService.getAllTags();
@@ -46,5 +44,24 @@ public class CategoryController {
         return modelAndView;
     }
 
+
+    @RequestMapping(value = {"/posts/tag/{categoryName}/{categoryId}/filter"}, params = {"orderBy", "direction", "page", "size"}, method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPosts(@PathVariable("categoryName") String categoryName,@PathVariable("categoryId") String category_id, @RequestParam("orderBy") String orderBy, @RequestParam("direction") String direction, @RequestParam("page") String page, @RequestParam("size") String size) {
+
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(size);
+        Long categoryId = Long.parseLong(category_id);
+        List<Post> list = categoryService.findJsonDataByCondition(categoryId,categoryName,orderBy, direction, pageNo, pageSize);
+        for (Post post : list) {
+            System.out.println("POST++++++ " + post.getId() + " " + post.getTitle() + " " + post.getContent() + " ");
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts",list);
+
+        return modelAndView;
+    }
 
 }

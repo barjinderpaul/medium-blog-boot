@@ -28,12 +28,6 @@ public class Post {
     @Column(name = "published_at", updatable = false)
     public LocalDateTime publishedAt;
 
-  /*  @Temporal(TemporalType.TIMESTAMP)
-    public Date createdAt = new Date();
-
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date updatedAt = new Date();*/
-
     @CreatedDate
     @Column(updatable = false)
     private Date createDateTime;
@@ -99,4 +93,7 @@ public class Post {
     public Post() {
 
     }
+
+//
+
 }

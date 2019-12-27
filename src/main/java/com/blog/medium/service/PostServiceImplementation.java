@@ -7,6 +7,10 @@ import com.blog.medium.repository.PostRepository;
 
 import com.blog.medium.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,8 +122,26 @@ public class PostServiceImplementation implements PostService {
 //        post.setTitle(title);
         postRepository.save(postFromDB);
 
-
-
-
     }
+
+    public List<Post> findJsonDataByCondition(String orderBy, String direction, int page, int size) {
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Post> data = postRepository.findAll(pageable);
+        System.out.println("PADASDASD DATAAA = " + data.getContent());
+        return data.getContent();
+    }
+
+    @Override
+    public List<Post> search(String keyword) {
+        return null;
+    }
+
+
 }

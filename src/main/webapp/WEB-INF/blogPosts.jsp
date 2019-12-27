@@ -44,6 +44,12 @@
                     <p>Create Post</p>
                 </a>
             </li>
+            <li>
+                <form action="/posts/search">
+                    <input type="text" name="query" placeholder="Enter keyword">
+                    <input class="btn btn-primary" type="submit" value="Search">
+                </form>
+            </li>
         </ul>
     </div>
 </nav>
