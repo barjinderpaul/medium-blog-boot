@@ -49,23 +49,18 @@ public class FilterController {
         Page data ;
         if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             data  = filterService.findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
-            ModelAndView modelAndView = new ModelAndView();
-
-            modelAndView.setViewName("filteredPosts");
-            modelAndView.addObject("posts",data.getContent());
-            modelAndView.addObject("postsPage",data);
-            modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-            return modelAndView;
-
         } else{
-            list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
+            data = filterService.findAllByOrderBy(orderBy, direction, pageNo, pageSize);
         }
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts",list);
 
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
+
     }
 
     /*

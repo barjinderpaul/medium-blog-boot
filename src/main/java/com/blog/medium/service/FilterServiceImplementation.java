@@ -83,4 +83,20 @@ public class FilterServiceImplementation implements FilterService {
 
     }
 
+    @Override
+    public Page<Post> findAllByOrderBy(String orderBy, String direction, Integer page, Integer size) {
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Post> data = postRepository.findAll(pageable);
+        System.out.println("PADASDASD DATAAA = " + data.getContent());
+        return data;
+    }
+
+
 }

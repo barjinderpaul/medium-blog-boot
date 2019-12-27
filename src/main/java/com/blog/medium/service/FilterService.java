@@ -10,4 +10,5 @@ public interface FilterService {
     Set<Post> search(String word, String word2);
     Set<Post> getFromCategories(String word);
     Page<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size);
+    Page<Post> findAllByOrderBy(String orderBy, String direction, Integer pageNo, Integer pageSize);
 }
