@@ -54,10 +54,14 @@ public class PostController {
     public ModelAndView getBlogPostsSortedByPublishDate(){
 
         List<Post> allPosts = postService.getAllPostsSortedByPublishDate();
+        List<Category> categories = categoryService.getAllTags();
+        List<User> users = userService.getAllUsers();
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("blogPosts");
         modelAndView.addObject("allPosts",allPosts);
+        modelAndView.addObject("allCategories",categories);
+        modelAndView.addObject("allUsers",users);
 
         return modelAndView;
     }
@@ -66,10 +70,15 @@ public class PostController {
     public ModelAndView getBlogPostsSortedByUpdationDate(){
 
         List<Post> allPosts = postService.getAllPostsSortedByLastUpdate();
+        List<Category> categories = categoryService.getAllTags();
+        List<User> users = userService.getAllUsers();
+
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("blogPosts");
         modelAndView.addObject("allPosts",allPosts);
+        modelAndView.addObject("allCategories",categories);
+        modelAndView.addObject("allUsers",users);
 
         return modelAndView;
     }
@@ -99,6 +108,7 @@ public class PostController {
         }
         else{
             categoriesList = new ArrayList<>();
+            categoriesList.add("uncategorized");
         }
         Long post_id = postService.addPost(title,content,categoriesList);
 
@@ -119,10 +129,12 @@ public class PostController {
     public ModelAndView getPost(@PathVariable("id") Long id) {
 
        Post post = postService.getPost(id);
+       Set<Category> categorySet = post.getCategories();
 
        ModelAndView modelAndView = new ModelAndView();
        modelAndView.setViewName("singlePost");
        modelAndView.addObject("post",post);
+       modelAndView.addObject("categorySet",categorySet);
 
        return modelAndView;
     }
