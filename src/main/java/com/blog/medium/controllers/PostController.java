@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class PostController {
@@ -89,9 +91,15 @@ public class PostController {
 
 
     @RequestMapping(value = "posts/add",method = RequestMethod.POST)
-    public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categories") String[] categories) {
+    public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories" , required = false) String[] categories) {
 
-        List<String> categoriesList =Arrays.asList(categories);
+        List<String> categoriesList;
+        if(categories != null) {
+            categoriesList = Arrays.asList(categories);
+        }
+        else{
+            categoriesList = new ArrayList<>();
+        }
         Long post_id = postService.addPost(title,content,categoriesList);
 
         ModelAndView modelAndView = new ModelAndView();
@@ -151,6 +159,7 @@ public class PostController {
         Long postId = Long.parseLong(id);
 
         Post post = postService.getPost(postId);
+        Set<Category> categorySet = post.getCategories();
         String content = post.getContent();
         String title = post.getTitle();
 
@@ -162,14 +171,17 @@ public class PostController {
         modelAndView.addObject("id",postId);
         modelAndView.addObject("content",content);
         modelAndView.addObject("title",title);
+        modelAndView.addObject("categorySet",categorySet);
 
         return modelAndView;
     }
 
     @RequestMapping(value = "posts/update/{id}",method = RequestMethod.POST)
-    public String updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content) {
+    public String updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categories") String[] categories) {
 
-        postService.updatePost(id,title,content);
+        List<String> categoriesList =Arrays.asList(categories);
+
+        postService.updatePost(id,title,content,categoriesList);
         return "redirect:/posts/{id}";
     }
 

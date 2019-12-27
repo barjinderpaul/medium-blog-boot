@@ -43,7 +43,7 @@ public class Post {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id" , insertable = true , updatable = true)
+    @JoinColumn(name = "user_id" , insertable = true , updatable = false)
     private User user;
 
     public User getUser() {

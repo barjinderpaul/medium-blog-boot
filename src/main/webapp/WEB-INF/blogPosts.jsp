@@ -40,7 +40,7 @@
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="posts/add">
+                <a class="nav-link" href="/posts/add">
                     <p>Create Post</p>
                 </a>
             </li>
@@ -56,12 +56,12 @@
     </p>
     <p>Filter by Tag:
         <c:forEach items="${allCategories}" var="list">
-           <span> <a href="posts/tag/${list.categoryName}/${list.category_id}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
+           <span> <a href="/posts/tag/${list.categoryName}/${list.category_id}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
         </c:forEach>
     </p>
     <p>Filter by Author:
         <c:forEach items="${allUsers}" var="list">
-            <span> <a href="posts/user/${list.username}/${list.id}" class="btn btn-outline-primary">${list.username}</a> </span>
+            <span> <a href="/posts/user/${list.username}/${list.id}" class="btn btn-outline-primary">${list.username}</a> </span>
         </c:forEach>
     </p>
     <br>
@@ -77,9 +77,19 @@
                         <c:otherwise> ${fn:substring(list.content,0,77)} <span>...</span> </c:otherwise>
                     </c:choose>
                 </p>
-                <a href="posts/${list.id}" class="btn btn-primary">Read More</a>
-                <a href="posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
-                <a href="posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+                <c:set var = "categories" scope = "session" value = "${list.getCategories()}"/>
+                <p class="font-weight-bold">Categories :
+                    <c:forEach items="${categories}" var="category">
+                        <span> <a href="/posts/tag/${category.categoryName}/${category.category_id}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
+                    </c:forEach>
+                    <c:if test="${fn:length(categories) lt 1}">
+                        <span>No categories found</span>
+                    </c:if>
+                </p>
+                <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
+                <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
+                <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+
             </div>
         </div>
         <hr>
