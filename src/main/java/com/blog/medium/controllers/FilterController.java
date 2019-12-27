@@ -39,33 +39,15 @@ public class FilterController {
         return modelAndView;
     }
 
-    /*
-     * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
-     * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
-     * */
-//    params = {"tag","orderBy", "direction", "page", "size"}
-    @RequestMapping(value = "/posts/filter" , method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
-                                    @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
-                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                    @RequestParam(value = "size",required = false ,defaultValue = "10") String size
-                                    ) {
+    public ModelAndView filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
         Integer pageNo = Integer.parseInt(page);
-        Integer pageSize =    Integer.parseInt(size);
-
-        System.out.println("HERE pageNo and pageSize = " + pageNo  + "  " + pageSize);
+        Integer pageSize = Integer.parseInt(size);
 
         List<Post> list = null;
         if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
-             list = filterService.findDataByTagName(tagName, orderBy, direction, pageNo, pageSize);
-        }
-        else{
+            list = filterService.findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
+        } else{
             list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
-            for (Post post : list) {
-                System.out.println("POST++++++ " + post.getId() + " " + post.getTitle() + " " + post.getContent() + " ");
-            }
         }
 
         ModelAndView modelAndView = new ModelAndView();
@@ -74,5 +56,31 @@ public class FilterController {
 
         return modelAndView;
     }
+
+    /*
+     * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
+     * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
+     * */
+    @RequestMapping(value = "/posts/filter" , params = {"orderBy=UpdateDateTime"},method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                    @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
+                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                    @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+        return filterPostsMethod(tagName, orderBy, direction, page, size);
+
+    }
+
+    @RequestMapping(value = "/posts/filter" , params = {"orderBy=CreateDateTime"},method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPostsByCreationDate( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                     @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
+                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                     @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+        return filterPostsMethod(tagName, orderBy, direction, page, size);
+    }
+
 
 }

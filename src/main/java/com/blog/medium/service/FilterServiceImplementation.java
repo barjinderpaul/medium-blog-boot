@@ -52,62 +52,35 @@ public class FilterServiceImplementation implements FilterService {
     }
 
     @Override
-    public List<Post> findDataByTagName(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
+    public List<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
         Category category = categoryRepository.findByCategoryName(tagName);
 
         Set<Post> postCategory = category.getPosts();
         System.out.println("SET POST = ");
-        for(Post post : postCategory) {
-            System.out.println(post.getTitle());
-        }
+
         List<Post> listCategory = new ArrayList<>();
         listCategory.addAll(postCategory);
 
-        System.out.println("LIST POST = ");
-        for (Post post: listCategory){
-            System.out.println(post.getTitle());
-        }
-
-        List<Post> sortedByOrder;
-        Sort sort = null;
         if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-            listCategory.sort(Comparator.comparing(Post::getUpdateDateTime));
+            listCategory.sort(Comparator.comparing(Post::getCreateDateTime));
+            if (orderBy.equals("CreateDateTime")) {
+                listCategory.sort(Comparator.comparing(Post::getCreateDateTime));
+            } else {
+                listCategory.sort(Comparator.comparing(Post::getUpdateDateTime));
+            }
+            ;
         }
         if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-            listCategory.sort((Post s1, Post s2)-> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
+            if (orderBy.equals("CreateDateTime")) {
+                listCategory.sort((Post s1, Post s2) -> s2.getCreateDateTime().compareTo(s1.getCreateDateTime()));
+            } else {
+                listCategory.sort((Post s1, Post s2) -> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
+            }
         }
-        assert sort != null;
         long start =  PageRequest.of(pageNo, size).getOffset();
         long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
-
-        System.out.println("PAGE CATEGORY = " + listCategory.size());
-
         return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size()).getContent();
 
-        /*
-        * Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Post> data = postRepository.findAll(pageable);
-        System.out.println("PADASDASD DATAAA = " + data.getContent());
-        return data.getContent();
-        * */
-
-        /*
-        * List<Patient> patientsList = new ArrayList<Patient>();
-        Set<Patient> list=searchPatient(patient);
-        patientsList.addAll(list);
-        int start =  new PageRequest(page, size).getOffset();
-        int end = (start + new PageRequest(page, size).getPageSize()) > patientsList.size() ? patientsList.size() : (start + new PageRequest(page, size).getPageSize());
-
-        return new PageImpl<Patient>(patientsList.subList(start, end), new PageRequest(page, size), patientsList.size());
-
-        *
-        * */
-
-//        return new ArrayList<>();
-
     }
-
 
 }
