@@ -6,12 +6,10 @@ import com.blog.medium.repository.CategoryRepository;
 import com.blog.medium.repository.FilterRepository;
 import com.blog.medium.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FilterServiceImplementation implements FilterService {
@@ -34,7 +32,13 @@ public class FilterServiceImplementation implements FilterService {
     @Override
     public Set<Post> getFromCategories(String word) {
         word = word.toLowerCase();
-        Category toSearchCategory = categoryRepository.findByName(word).get(0);
+        List<Category> categoryListSingle = categoryRepository.findByName(word);
+
+        if(categoryListSingle == null || categoryListSingle.size() == 0){
+            return new HashSet<>();
+        }
+
+        Category toSearchCategory = categoryListSingle.get(0);
 
         List<Post> allPosts = postRepository.findAll();
         Set<Post> matchedPosts = new LinkedHashSet<>();
@@ -45,6 +49,53 @@ public class FilterServiceImplementation implements FilterService {
         }
 
         return matchedPosts;
+    }
+
+    @Override
+    public List<Post> findDataByTagName(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
+        Category category = categoryRepository.findByName(tagName).get(0);
+
+        Set<Post> postCategory = category.getPosts();
+        List<Post> listCategory = new ArrayList<>();
+        listCategory.addAll(postCategory);
+
+//        return listCategory;
+
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(pageNo, size, sort);
+        Page<Category> data = categoryRepository.findByCategoryName(tagName,pageable);
+        System.out.println("PAGE CATEGORY = " + data.getContent());
+        System.out.println("PADASDASD DATAAA = " + data.getContent());
+
+        return new PageImpl<Post>(listCategory.subList(0,listCategory.size()),pageable,listCategory.size()).getContent();
+
+        /*
+        * Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Post> data = postRepository.findAll(pageable);
+        System.out.println("PADASDASD DATAAA = " + data.getContent());
+        return data.getContent();
+        * */
+
+        /*
+        * List<Patient> patientsList = new ArrayList<Patient>();
+        Set<Patient> list=searchPatient(patient);
+        patientsList.addAll(list);
+        int start =  new PageRequest(page, size).getOffset();
+        int end = (start + new PageRequest(page, size).getPageSize()) > patientsList.size() ? patientsList.size() : (start + new PageRequest(page, size).getPageSize());
+
+        return new PageImpl<Patient>(patientsList.subList(start, end), new PageRequest(page, size), patientsList.size());
+
+        *
+        * */
+
+//        return new ArrayList<>();
+
     }
 
 

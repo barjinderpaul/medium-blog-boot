@@ -203,26 +203,6 @@ public class PostController {
         return "redirect:/posts/{id}";
     }
 
-    /*
-    * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
-    * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
-    * */
-    @RequestMapping(value = "/posts/filter", params = {"orderBy", "direction", "page", "size"}, method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView filterPosts(@RequestParam("orderBy") String orderBy, @RequestParam("direction") String direction, @RequestParam("page") String page, @RequestParam("size") String size) {
 
-        Integer pageNo = Integer.parseInt(page);
-        Integer pageSize = Integer.parseInt(size);
-        List<Post> list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
-        for (Post post : list) {
-            System.out.println("POST++++++ " + post.getId() + " " + post.getTitle() + " " + post.getContent() + " ");
-        }
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts",list);
-
-        return modelAndView;
-    }
 
 }
