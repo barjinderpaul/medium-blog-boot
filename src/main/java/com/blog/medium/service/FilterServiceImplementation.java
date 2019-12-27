@@ -52,7 +52,7 @@ public class FilterServiceImplementation implements FilterService {
     }
 
     @Override
-    public List<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
+    public Page<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
         Category category = categoryRepository.findByCategoryName(tagName);
 
         Set<Post> postCategory = category.getPosts();
@@ -79,7 +79,7 @@ public class FilterServiceImplementation implements FilterService {
         }
         long start =  PageRequest.of(pageNo, size).getOffset();
         long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
-        return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size()).getContent();
+        return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size());
 
     }
 

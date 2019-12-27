@@ -5,6 +5,7 @@ import com.blog.medium.service.FilterService;
 import com.blog.medium.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 @Controller
 public class FilterController {
@@ -44,8 +46,17 @@ public class FilterController {
         Integer pageSize = Integer.parseInt(size);
 
         List<Post> list = null;
+        Page data ;
         if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
-            list = filterService.findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
+            data  = filterService.findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
+            ModelAndView modelAndView = new ModelAndView();
+
+            modelAndView.setViewName("filteredPosts");
+            modelAndView.addObject("posts",data.getContent());
+            modelAndView.addObject("postsPage",data);
+            modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+            return modelAndView;
+
         } else{
             list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
         }
