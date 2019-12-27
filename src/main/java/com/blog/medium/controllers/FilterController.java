@@ -48,7 +48,7 @@ public class FilterController {
      * */
     @RequestMapping(value = "/posts/filter" , params = {"tag"},method = RequestMethod.GET)
     @ResponseBody
-    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+    public ModelAndView filterPostsByUpdationDate( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                     @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
@@ -64,6 +64,16 @@ public class FilterController {
                                      @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                      @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                      @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+        return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
+    }
+
+    @RequestMapping(value = "/posts/filter" ,method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
+                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                                   @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
