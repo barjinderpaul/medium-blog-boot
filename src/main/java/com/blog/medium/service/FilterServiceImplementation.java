@@ -68,12 +68,14 @@ public class FilterServiceImplementation implements FilterService {
         if (direction.equals("DESC")) {
             sort = Sort.by(orderBy).descending();
         }
-        Pageable pageable = PageRequest.of(pageNo, size, sort);
-        Page<Category> data = categoryRepository.findByCategoryName(tagName,pageable);
-        System.out.println("PAGE CATEGORY = " + data.getContent());
-        System.out.println("PADASDASD DATAAA = " + data.getContent());
+        long start =  PageRequest.of(pageNo, size, sort).getOffset();
+        long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
 
-        return new PageImpl<Post>(listCategory.subList(0,listCategory.size()),pageable,listCategory.size()).getContent();
+
+//        Page<Category> data = categoryRepository.findByCategoryName(tagName,pageable);
+        System.out.println("PAGE CATEGORY = " + listCategory.size());
+
+        return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size()).getContent();
 
         /*
         * Pageable pageable = PageRequest.of(page, size, sort);
