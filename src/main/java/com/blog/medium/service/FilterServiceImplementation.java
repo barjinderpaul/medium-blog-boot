@@ -59,8 +59,6 @@ public class FilterServiceImplementation implements FilterService {
         List<Post> listCategory = new ArrayList<>();
         listCategory.addAll(postCategory);
 
-//        return listCategory;
-
         Sort sort = null;
         if (direction.equals("ASC")) {
             sort = Sort.by(orderBy).ascending();
@@ -71,8 +69,6 @@ public class FilterServiceImplementation implements FilterService {
         long start =  PageRequest.of(pageNo, size, sort).getOffset();
         long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
 
-
-//        Page<Category> data = categoryRepository.findByCategoryName(tagName,pageable);
         System.out.println("PAGE CATEGORY = " + listCategory.size());
 
         return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size()).getContent();

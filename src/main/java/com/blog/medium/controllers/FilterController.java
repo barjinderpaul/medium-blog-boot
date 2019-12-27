@@ -43,30 +43,34 @@ public class FilterController {
      * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
      * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
      * */
-    @RequestMapping(value = "/posts/filter", params = {"orderBy", "direction", "page", "size"}, method = RequestMethod.GET)
+//    params = {"tag","orderBy", "direction", "page", "size"}
+    @RequestMapping(value = "/posts/filter" , method = RequestMethod.GET)
     @ResponseBody
-    public ModelAndView filterPosts(@RequestParam("orderBy") String orderBy,
-                                    @RequestParam("direction") String direction,
-                                    @RequestParam("page") String page,
-                                    @RequestParam("size") String size,
-                                    @DefaultValue ("noTag") @RequestParam(value = "tag", required = false) String tagName) {
+    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                    @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
+                                    @RequestParam(value = "direction",required = false, defaultValue = "ASC") String direction,
+                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                    @RequestParam(value = "size",required = false ,defaultValue = "10") String size
+                                    ) {
 
-        Integer pageNo = Integer.parseInt(page);
-        Integer pageSize = Integer.parseInt(size);
+
+
+           Integer pageNo = Integer.parseInt(page);
+           Integer pageSize =    Integer.parseInt(size);
+
+
+        System.out.println("HERE pageNo and pageSize = " + pageNo  + "  " + pageSize);
 
         List<Post> list = null;
         if( tagName!= null && !(tagName.toLowerCase().equals("noTag"))){
              list = filterService.findDataByTagName(tagName, orderBy, direction, pageNo, pageSize);
-
         }
         else{
             list = postService.findJsonDataByCondition(orderBy, direction, pageNo, pageSize);
             for (Post post : list) {
                 System.out.println("POST++++++ " + post.getId() + " " + post.getTitle() + " " + post.getContent() + " ");
             }
-
         }
-
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("blogPosts");
