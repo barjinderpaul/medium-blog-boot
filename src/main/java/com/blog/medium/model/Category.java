@@ -47,7 +47,8 @@ public class Category {
 
 
     @ManyToMany(fetch = FetchType.LAZY ,mappedBy = "categories")
-    private Set<Post> posts = new HashSet<>();
+    @OrderBy("post_id")
+    private Set<Post> posts = new LinkedHashSet<>();
 
     public Set<Post> getPosts() {
         return posts;

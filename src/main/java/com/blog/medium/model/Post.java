@@ -28,6 +28,22 @@ public class Post {
     @Column(name = "published_at", updatable = false)
     public LocalDateTime publishedAt;
 
+    public Date getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(Date createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public Date getUpdateDateTime() {
+        return updateDateTime;
+    }
+
+    public void setUpdateDateTime(Date updateDateTime) {
+        this.updateDateTime = updateDateTime;
+    }
+
     @CreatedDate
     @Column(updatable = false)
     private Date createDateTime;
@@ -51,7 +67,8 @@ public class Post {
     @JoinTable(name = "postCategory",
             joinColumns = { @JoinColumn(name = "post_id", unique = false) },
             inverseJoinColumns = { @JoinColumn(name = "category_id", unique = false) })
-    private Set<Category> categories = new HashSet<>();
+    @OrderBy("category_id")
+    private Set<Category> categories = new LinkedHashSet<>();
 
     public Set getCategories() {
         return categories;

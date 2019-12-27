@@ -32,13 +32,13 @@ public class FilterServiceImplementation implements FilterService {
     @Override
     public Set<Post> getFromCategories(String word) {
         word = word.toLowerCase();
-        List<Category> categoryListSingle = categoryRepository.findByName(word);
+        Category categoryListSingle = categoryRepository.findByCategoryName(word);
 
-        if(categoryListSingle == null || categoryListSingle.size() == 0){
+        if(categoryListSingle == null){
             return new HashSet<>();
         }
 
-        Category toSearchCategory = categoryListSingle.get(0);
+        Category toSearchCategory = categoryListSingle;
 
         List<Post> allPosts = postRepository.findAll();
         Set<Post> matchedPosts = new LinkedHashSet<>();
@@ -53,20 +53,33 @@ public class FilterServiceImplementation implements FilterService {
 
     @Override
     public List<Post> findDataByTagName(String tagName, String orderBy, String direction, Integer pageNo, Integer size) {
-        Category category = categoryRepository.findByName(tagName).get(0);
+        Category category = categoryRepository.findByCategoryName(tagName);
 
         Set<Post> postCategory = category.getPosts();
+        System.out.println("SET POST = ");
+        for(Post post : postCategory) {
+            System.out.println(post.getTitle());
+        }
         List<Post> listCategory = new ArrayList<>();
         listCategory.addAll(postCategory);
 
+        System.out.println("LIST POST = ");
+        for (Post post: listCategory){
+            System.out.println(post.getTitle());
+        }
+
+        List<Post> sortedByOrder;
         Sort sort = null;
         if (direction.equals("ASC")) {
             sort = Sort.by(orderBy).ascending();
+            listCategory.sort(Comparator.comparing(Post::getUpdateDateTime));
         }
         if (direction.equals("DESC")) {
             sort = Sort.by(orderBy).descending();
+            listCategory.sort((Post s1, Post s2)-> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
         }
-        long start =  PageRequest.of(pageNo, size, sort).getOffset();
+        assert sort != null;
+        long start =  PageRequest.of(pageNo, size).getOffset();
         long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
 
         System.out.println("PAGE CATEGORY = " + listCategory.size());

@@ -38,6 +38,7 @@ public class User {
     @LastModifiedDate
     private Date updateDateTime;
     @OneToMany(mappedBy="user")
+    @OrderBy("post_id")
     private List<Post> posts = new ArrayList<>();
 
     public Long getId() {

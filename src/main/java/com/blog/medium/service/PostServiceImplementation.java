@@ -61,7 +61,6 @@ public class PostServiceImplementation implements PostService {
             user.setEmail("admin@admin.com");
             user.setUsername("admin");
             user.setPassword("admin");*/
-
         Optional<User> userOptional = userRepository.findById(1L);
         User user = userOptional.get();
         Post post = new Post();
@@ -71,8 +70,8 @@ public class PostServiceImplementation implements PostService {
         post.setUser(user);
 
         for(String category : categories) {
-            List<Category> categoryFounds = categoryRepository.findByName(category);
-            Category categoryFound = categoryFounds.get(0);
+            Category categoryFounds = categoryRepository.findByCategoryName(category);
+            Category categoryFound = categoryFounds;
             categoryFound.getPosts().add(post);
             post.getCategories().add(categoryFound);
         }
@@ -98,19 +97,19 @@ public class PostServiceImplementation implements PostService {
         postFromDB.setTitle(title);
 
         for(String categoryName: categoriesList) {
-            List<Category> category =  categoryRepository.findByName(categoryName);
+            Category category =  categoryRepository.findByCategoryName(categoryName);
 
-            if(!(postFromDB.getCategories().contains(category.get(0)))){
-                postFromDB.getCategories().add(category.get(0));
-                category.get(0).getPosts().add(postFromDB);
+            if(!(postFromDB.getCategories().contains(category))){
+                postFromDB.getCategories().add(category);
+                category.getPosts().add(postFromDB);
             }
         }
 
         if(postFromDB.getCategories().size() > 1) {
-            List<Category> uncategorizedCategory = categoryRepository.findByName("uncategorized");
-            if(postFromDB.getCategories().contains(uncategorizedCategory.get(0))){
-                postFromDB.getCategories().remove(uncategorizedCategory.get(0));
-                uncategorizedCategory.get(0).getPosts().remove(postFromDB);
+            Category uncategorizedCategory = categoryRepository.findByCategoryName("uncategorized");
+            if(postFromDB.getCategories().contains(uncategorizedCategory)){
+                postFromDB.getCategories().remove(uncategorizedCategory);
+                uncategorizedCategory.getPosts().remove(postFromDB);
             }
         }
 

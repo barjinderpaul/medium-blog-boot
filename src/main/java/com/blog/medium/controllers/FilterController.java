@@ -48,21 +48,17 @@ public class FilterController {
     @ResponseBody
     public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                     @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
-                                    @RequestParam(value = "direction",required = false, defaultValue = "ASC") String direction,
+                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                     @RequestParam(value = "size",required = false ,defaultValue = "10") String size
                                     ) {
-
-
-
-           Integer pageNo = Integer.parseInt(page);
-           Integer pageSize =    Integer.parseInt(size);
-
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize =    Integer.parseInt(size);
 
         System.out.println("HERE pageNo and pageSize = " + pageNo  + "  " + pageSize);
 
         List<Post> list = null;
-        if( tagName!= null && !(tagName.toLowerCase().equals("noTag"))){
+        if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
              list = filterService.findDataByTagName(tagName, orderBy, direction, pageNo, pageSize);
         }
         else{
