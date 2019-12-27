@@ -46,7 +46,7 @@ public class FilterController {
      * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
      * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
      * */
-    @RequestMapping(value = "/posts/filter" , params = {"tag","orderBy=UpdateDateTime"},method = RequestMethod.GET)
+    @RequestMapping(value = "/posts/filter" , params = {"tag"},method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                     @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
