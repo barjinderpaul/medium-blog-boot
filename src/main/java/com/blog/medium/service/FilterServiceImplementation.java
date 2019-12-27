@@ -8,8 +8,10 @@ import com.blog.medium.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class FilterServiceImplementation implements FilterService {
@@ -96,6 +98,30 @@ public class FilterServiceImplementation implements FilterService {
         Page<Post> data = postRepository.findAll(pageable);
         System.out.println("PADASDASD DATAAA = " + data.getContent());
         return data;
+    }
+
+
+    public ModelAndView filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(size);
+
+        List<Post> list = null;
+        Page data ;
+        if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
+            System.out.println("BY TAG NAME ");
+            data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
+        } else{
+            data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
+        }
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+
     }
 
 

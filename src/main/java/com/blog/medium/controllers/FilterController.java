@@ -41,51 +41,30 @@ public class FilterController {
         return modelAndView;
     }
 
-    public ModelAndView filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
-        Integer pageNo = Integer.parseInt(page);
-        Integer pageSize = Integer.parseInt(size);
-
-        List<Post> list = null;
-        Page data ;
-        if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
-            data  = filterService.findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
-        } else{
-            data = filterService.findAllByOrderBy(orderBy, direction, pageNo, pageSize);
-        }
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-
-    }
 
     /*
      * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
      * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
      * */
-    @RequestMapping(value = "/posts/filter" , params = {"orderBy=UpdateDateTime"},method = RequestMethod.GET)
+    @RequestMapping(value = "/posts/filter" , params = {"tag","orderBy=UpdateDateTime"},method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                     @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                     @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
-        return filterPostsMethod(tagName, orderBy, direction, page, size);
+        return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
 
     }
 
-    @RequestMapping(value = "/posts/filter" , params = {"orderBy=CreateDateTime"},method = RequestMethod.GET)
+    @RequestMapping(value = "/posts/filter" , params = {"tag","orderBy=CreateDateTime"},method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPostsByCreationDate( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                      @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
                                      @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                      @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                      @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
-        return filterPostsMethod(tagName, orderBy, direction, page, size);
+        return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
 
