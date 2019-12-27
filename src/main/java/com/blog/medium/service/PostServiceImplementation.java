@@ -102,6 +102,14 @@ public class PostServiceImplementation implements PostService {
             }
         }
 
+        if(postFromDB.getCategories().size() > 1) {
+            List<Category> uncategorizedCategory = categoryRepository.findByName("uncategorized");
+            if(postFromDB.getCategories().contains(uncategorizedCategory.get(0))){
+                postFromDB.getCategories().remove(uncategorizedCategory.get(0));
+                uncategorizedCategory.get(0).getPosts().remove(postFromDB);
+            }
+        }
+
 
 //        user.getPosts().add(postFromDB);
 //        Post post = new Post();

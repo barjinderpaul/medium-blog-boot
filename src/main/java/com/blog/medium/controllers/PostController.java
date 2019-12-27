@@ -189,9 +189,15 @@ public class PostController {
     }
 
     @RequestMapping(value = "posts/update/{id}",method = RequestMethod.POST)
-    public String updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("categories") String[] categories) {
+    public String updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories", required = false) String[] categories) {
 
-        List<String> categoriesList =Arrays.asList(categories);
+        List<String> categoriesList;
+        if(categories != null) {
+            categoriesList = Arrays.asList(categories);
+        }
+        else{
+            categoriesList = new ArrayList<>();
+        }
 
         postService.updatePost(id,title,content,categoriesList);
         return "redirect:/posts/{id}";
