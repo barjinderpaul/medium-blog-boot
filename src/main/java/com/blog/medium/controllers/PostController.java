@@ -34,6 +34,7 @@ public class PostController {
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
             @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+
         Page data =  postService.getfilterPostsHomeMethod(page, size);
         List<Category> categories = categoryService.getAllTags();
         List<User> users = userService.getAllUsers();
@@ -49,7 +50,26 @@ public class PostController {
         return modelAndView;
     }
 
-     @RequestMapping(value = "posts/add",method = RequestMethod.GET)
+    @RequestMapping(value = "/posts" ,method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView filterPostsByCreationDate(@RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
+                                                  @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                                  @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
+                                                  @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                                  @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                                  @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+        Page<Post> data = postService.filterPostsMethod(username,tagName, orderBy, direction, page, size);
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+    }
+
+
+    @RequestMapping(value = "posts/add",method = RequestMethod.GET)
     public ModelAndView redirectToCreatePost(){
         ModelAndView modelAndView = new ModelAndView();
 
@@ -176,91 +196,5 @@ public class PostController {
 
         return modelAndView;
     }
-
-/*
-* Filter controller mappings :
-* */
-
-
-    /*
-     * http://localhost:8080/posts/filter?orderBy=UpdateDateTime&direction=DESC&page=1&size=2
-     * http://localhost:8080/posts/filter?orderBy=PublishedAt&direction=DESC&page=1&size=2
-     * */
-    @RequestMapping(value = "/posts" , params = {"tag"},method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView filterPostsByUpdationDate( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
-                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
-                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-
-    }
-
-    @RequestMapping(value = "/posts" , params = {"tag","orderBy=CreateDateTime"},method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView filterPostsByCreationDate( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
-                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
-                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-
-    }
-
-    @RequestMapping(value = "/posts",method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
-                                     @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
-                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                     @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        System.out.println("IN FILTER POSTS");
-        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-
-    }
-
-    @RequestMapping(value = "/posts" , params = {"user"},method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView getBlogPostsByUser( @RequestParam(value = "user", required = true, defaultValue = "admin") String userName,
-                                            @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
-                                            @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                            @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                            @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-
-        Page<Post> posts =  postService.getBlogPostsByUser(userName, orderBy, direction, page, size);
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",posts.getContent());
-        modelAndView.addObject("postsPage",posts);
-        modelAndView.addObject("numbers", IntStream.range(0,posts.getTotalPages()).toArray());
-        return modelAndView;
-
-
-    }
-
 
 }

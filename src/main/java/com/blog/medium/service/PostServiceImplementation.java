@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.IntStream;
 
 
 @Service("PostService")
@@ -224,16 +222,20 @@ public class PostServiceImplementation implements PostService {
 
 
 
-    public Page<Post> filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
+    public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
 
-        List<Post> list = null;
         Page data ;
-        if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
+        if(!(username.equals("noUser"))) {
+            System.out.println("BY USERNAME");
+            data =  getBlogPostsByUser(username, orderBy, direction, page, size);
+        }
+        else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             System.out.println("BY TAG NAME ");
             data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
         } else{
+            System.out.println("BY ALL POSTS");
             data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
         }
         return data;
