@@ -1,8 +1,12 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
+import com.blog.medium.model.User;
+import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.FilterService;
 import com.blog.medium.service.PostService;
+import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,33 @@ public class FilterController {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    UserService userService;
+
+
+    @RequestMapping(value = "/",method = RequestMethod.GET)
+    public ModelAndView filterPostsHome(
+                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                     @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+        System.out.println("IN FILTER POSTS");
+        Page data =  filterService.getfilterPostsHomeMethod(page, size);
+        List<Category> categories = categoryService.getAllTags();
+        List<User> users = userService.getAllUsers();
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("allCategories",categories);
+        modelAndView.addObject("allUsers",users);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+    }
 
     @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
     public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
@@ -67,7 +98,7 @@ public class FilterController {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
-    @RequestMapping(value = "/posts",params = {},method = RequestMethod.GET)
+    @RequestMapping(value = "/posts",method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPosts( @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                                    @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,

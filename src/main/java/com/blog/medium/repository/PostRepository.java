@@ -15,6 +15,7 @@ import java.util.List;
 @Repository
 public interface PostRepository<P> extends JpaRepository<Post,Long> {
     List<P>  findAllByOrderByIdAsc();
+    Page<P> findAllByOrderByIdAsc(Pageable pageable);
 //    Page<P> findAllByOrderByAsc(Pageable pageable);
     List<P> findAllByOrderByUpdateDateTimeDesc();
     List<P> findAllByOrderByPublishedAtDesc();

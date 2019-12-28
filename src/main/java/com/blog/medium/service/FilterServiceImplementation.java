@@ -161,8 +161,16 @@ public class FilterServiceImplementation implements FilterService {
         long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > userPosts.size() ? userPosts.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
         return new PageImpl<Post>(userPosts.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),userPosts.size());
 
+    }
 
+    public Page<Post> getfilterPostsHomeMethod(String page, String size) {
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(size);
 
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page data = postRepository.findAllByOrderByIdAsc(pageable);
+
+        return data;
     }
 
 

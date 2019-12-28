@@ -23,12 +23,12 @@
     </p>
     <p>Filter by Tag:
         <c:forEach items="${allCategories}" var="list">
-           <span> <a href="/posts/filter?tag=${list.categoryName}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
+           <span> <a href="/posts/?tag=${list.categoryName}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
         </c:forEach>
     </p>
     <p>Filter by Author:
         <c:forEach items="${allUsers}" var="list">
-            <span> <a href="/posts/filter?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
+            <span> <a href="/posts/?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
         </c:forEach>
     </p>
 
@@ -53,7 +53,7 @@
                 <p class="font-weight-bold">Categories :
 
                     <c:forEach items="${categories}" var="category">
-                        <span> <a href="/posts/filter?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
+                        <span> <a href="/posts/?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
                     </c:forEach>
                     <c:if test="${fn:length(categories) lt 1}">
                         <span>No categories found</span>
@@ -69,6 +69,25 @@
         <hr>
         <br>
     </c:forEach>
+
+    <ul>
+        <c:set var = "queryString" value = "<%=request.getQueryString()%>"/>
+        <c:forEach items="${numbers}" var="pageNumber">
+            <%
+                String query = request.getQueryString();
+                String newQuery = "";
+                if( !(query.contains("page")) ){
+                    newQuery = query+"&page="+pageContext.getAttribute("pageNumber")+"&size=2";
+                }
+                else {
+                    newQuery = query.replaceAll("page=[0-9]+", "page=" + pageContext.getAttribute("pageNumber"));
+                }
+                pageContext.setAttribute("newQuery", newQuery);
+            %>
+            <a href="/?${newQuery}">${pageNumber + 1} </a>
+        </c:forEach>
+    </ul>
+
 </div>
 
 <%@ include file="layout/footer.html"%>

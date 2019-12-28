@@ -32,7 +32,7 @@ public class PostController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = {"/"}, method= RequestMethod.GET)
+/*    @RequestMapping(value = {"/"}, method= RequestMethod.GET)
     public ModelAndView getBlogPosts(){
 
        List<Post> allPosts = postService.getAllPosts();
@@ -48,7 +48,7 @@ public class PostController {
        modelAndView.addObject("allUsers",users);
 
        return modelAndView;
-    }
+    }*/
 
     @RequestMapping(value = {"/posts/sort/publish"}, method= RequestMethod.GET)
     public ModelAndView getBlogPostsSortedByPublishDate(){
