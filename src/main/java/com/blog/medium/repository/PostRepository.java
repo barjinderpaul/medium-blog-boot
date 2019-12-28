@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Repository
@@ -20,5 +21,8 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     List<P> findAllByOrderByUpdateDateTimeDesc();
     List<P> findAllByOrderByPublishedAtDesc();
     Page<Post> findByCategories(String name, Pageable pageable);
+
+    /*FilterRepository*/
+    Set<Post> findAllByTitleContainingOrContentContaining(String word, String word2);
 
 }

@@ -18,17 +18,17 @@
 <div class="container">
     <h1>Welcome to Blog </h1>
     <p>Sort by :
-        <span><a class="btn btn-primary m-auto" href="/posts/filter?orderBy=UpdateDateTime">Last Updation</a></span>
-        <span><a class="btn btn-primary m-auto" href="/posts/filter?orderBy=CreateDateTime">Last Published</a></span>
+        <span><a class="btn btn-primary m-auto" href="/posts?orderBy=UpdateDateTime">Last Updation</a></span>
+        <span><a class="btn btn-primary m-auto" href="/posts?orderBy=CreateDateTime">Last Published</a></span>
     </p>
     <p>Filter by Tag:
         <c:forEach items="${allCategories}" var="list">
-           <span> <a href="/posts/?tag=${list.categoryName}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
+           <span> <a href="/posts?tag=${list.categoryName}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
         </c:forEach>
     </p>
     <p>Filter by Author:
         <c:forEach items="${allUsers}" var="list">
-            <span> <a href="/posts/?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
+            <span> <a href="/posts?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
         </c:forEach>
     </p>
 
@@ -53,7 +53,7 @@
                 <p class="font-weight-bold">Categories :
 
                     <c:forEach items="${categories}" var="category">
-                        <span> <a href="/posts/?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
+                        <span> <a href="/posts?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
                     </c:forEach>
                     <c:if test="${fn:length(categories) lt 1}">
                         <span>No categories found</span>
