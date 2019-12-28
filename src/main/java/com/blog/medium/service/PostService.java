@@ -18,7 +18,7 @@ public interface PostService {
     List<Post> search(String keyword);
 
 //    FilterServiceInterface
-    Set<Post> search(String word, String word2);
+    Set<Post> search(String titleQuery, String contentQuery, String categoryQuery);
     Set<Post> getFromCategories(String word);
     Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String page, String size);
     Page<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size);

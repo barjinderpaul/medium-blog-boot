@@ -23,10 +23,11 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     Page<Post> findByCategories(String name, Pageable pageable);
 
     /*FilterRepository*/
-    Set<Post> findAllByTitleContainingOrContentContaining(String word, String word2);
+    Set<Post> findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContains(String word, String word2, String categoryName);
 
     /*Testing category*/
     List<Post> findAllByCategories_categoryNameContains(String category);
     Page<Post> findDistinctByCategories_categoryNameIn(String[] categories, Pageable pageable);
+
 
 }

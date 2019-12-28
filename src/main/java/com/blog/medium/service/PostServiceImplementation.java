@@ -144,9 +144,8 @@ public class PostServiceImplementation implements PostService {
     * Filter service implementations
     * */
 
-    public Set<Post> search(String word, String word2) {
-        Set<Post> searchResults = postRepository.findAllByTitleContainingOrContentContaining(word,word);
-        return searchResults;
+    public Set<Post> search(String titleWord, String contentWord, String categoryWord) {
+        return postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContains(titleWord, contentWord, categoryWord);
     }
 
     @Override

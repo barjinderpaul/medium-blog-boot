@@ -86,11 +86,7 @@ public class PostController {
 
     @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
     public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
-
-        Set<Post> searchResults = postService.search(queryWord,queryWord);
-        Set<Post> postsWithCategoryContainingQueryWord = postService.getFromCategories(queryWord);
-
-        searchResults.addAll(postsWithCategoryContainingQueryWord);
+        Set<Post> searchResults = postService.search(queryWord,queryWord,queryWord);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("blogPosts");
