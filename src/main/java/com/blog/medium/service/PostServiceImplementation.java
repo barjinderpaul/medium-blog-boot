@@ -222,18 +222,24 @@ public class PostServiceImplementation implements PostService {
 
 
 
-    public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String page, String size){
+    public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
 
-        Page data ;
+        Page data = null;
         if(!(username.equals("noUser"))) {
             System.out.println("BY USERNAME");
             data =  getBlogPostsByUser(username, orderBy, direction, page, size);
         }
         else if(tagName.contains(",")){
             String [] categories = tagName.split(",");
-            data = getPostsByMultipleTags(categories,orderBy,direction,pageNo,pageSize);
+            if(operation.toLowerCase().equals("and")) {
+                data = getPostsByMultipleTags(categories, orderBy, direction, pageNo, pageSize);
+            }
+            else if(operation.toLowerCase().equals("or")){
+                Pageable pageable = PageRequest.of(pageNo, pageSize);
+                data = postRepository.findDistinctByCategories_categoryNameIn(categories, pageable);
+            }
         }
         else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             System.out.println("BY TAG NAME ");
@@ -289,16 +295,23 @@ public class PostServiceImplementation implements PostService {
     @Override
     public Page<Post> getPostsByMultipleTags(String[] categories, String orderBy, String direction, Integer pageNo, Integer pageSize) {
 
-        Set<Post> postsWithCategories = new LinkedHashSet<>();
-        for(String categoryName : categories) {
+        List<Post> allPosts = postRepository.findAll();
+        List<Category> categoryList = new ArrayList<>();
+        for(String categoryName: categories) {
             Category category = categoryRepository.findByCategoryName(categoryName);
-            postsWithCategories.addAll(category.getPosts());
+            categoryList.add(category);
         }
-        List<Post> userPosts = new ArrayList<>();
-        userPosts.addAll(postsWithCategories);
+
+        List<Post> allPostsWithAllCategories = new ArrayList<>();
+        for(Post post: allPosts){
+            if(post.getCategories().containsAll(categoryList)){
+                allPostsWithAllCategories.add(post);
+            }
+        }
+
         long start =  PageRequest.of(pageNo, pageSize).getOffset();
-        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > userPosts.size() ? userPosts.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
-        return new PageImpl<Post>(userPosts.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),userPosts.size());
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
 
 
     }

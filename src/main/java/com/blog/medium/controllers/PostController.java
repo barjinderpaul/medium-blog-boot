@@ -3,6 +3,8 @@ package com.blog.medium.controllers;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
 import com.blog.medium.model.User;
+import com.blog.medium.repository.PostRepository;
+import com.blog.medium.repository.UserRepository;
 import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.PostService;
 import com.blog.medium.service.UserService;
@@ -30,6 +32,9 @@ public class PostController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PostRepository postRepository;
+
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
@@ -52,14 +57,24 @@ public class PostController {
 
     @RequestMapping(value = "/posts" ,method = RequestMethod.GET)
     @ResponseBody
-    public ModelAndView filterPostsByCreationDate(@RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
+    public ModelAndView filterPostsByCreationDate(@RequestParam(value = "operation",required = false,defaultValue = "and") String operation,
+                                                  @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
                                                   @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
 
-        Page<Post> data = postService.filterPostsMethod(username,tagName, orderBy, direction, page, size);
+        System.out.println("TAGS +  + " + tagName);
+        Page<Post> data = postService.filterPostsMethod(username, tagName, orderBy, direction,operation, page, size);
+
+        /*Testing */
+        List<Post> categoryList = postRepository.findAllByCategories_categoryNameContains(tagName);
+//        List<Post> categoryListMultiple = postRepository.findAllByCategories_categoryNameIn(
+//                new String[] {"java","sql"});
+
+        System.out.println("POSTS +++ " + categoryList);
+//        System.out.println("MULTIPLE TAGS POST +++ " + categoryListMultiple);
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("filteredPosts");

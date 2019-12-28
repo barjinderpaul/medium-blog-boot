@@ -20,7 +20,7 @@ public interface PostService {
 //    FilterServiceInterface
     Set<Post> search(String word, String word2);
     Set<Post> getFromCategories(String word);
-    Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String page, String size);
+    Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String page, String size);
     Page<Post> findDataByTagNameOrderBy(String tagName, String orderBy, String direction, Integer pageNo, Integer size);
     Page<Post> findAllByOrderBy(String orderBy, String direction, Integer pageNo, Integer pageSize);
     Page<Post> getBlogPostsByUser(String userName,String orderBy,String direction,String page, String size);
