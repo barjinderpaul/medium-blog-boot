@@ -193,7 +193,14 @@ public class PostController {
                                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                    @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        return postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
 
     }
 
@@ -204,7 +211,15 @@ public class PostController {
                                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                    @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        return postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+
     }
 
     @RequestMapping(value = "/posts",method = RequestMethod.GET)
@@ -215,7 +230,15 @@ public class PostController {
                                      @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                      @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
         System.out.println("IN FILTER POSTS");
-        return postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        Page<Post> data = postService.filterPostsMethod(tagName, orderBy, direction, page, size);
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",data.getContent());
+        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+
     }
 
     @RequestMapping(value = "/posts" , params = {"user"},method = RequestMethod.GET)

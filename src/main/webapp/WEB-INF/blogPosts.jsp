@@ -18,8 +18,8 @@
 <div class="container">
     <h1>Welcome to Blog </h1>
     <p>Sort by :
-        <span><a class="btn btn-primary m-auto" href="/posts?orderBy=UpdateDateTime">Last Updation</a></span>
-        <span><a class="btn btn-primary m-auto" href="/posts?orderBy=CreateDateTime">Last Published</a></span>
+        <span><a class="btn btn-outline-primary m-auto" href="/posts?orderBy=UpdateDateTime">Last Updation</a></span>
+        <span><a class="btn btn-outline-primary m-auto" href="/posts?orderBy=CreateDateTime">Last Published</a></span>
     </p>
     <p>Filter by Tag:
         <c:forEach items="${allCategories}" var="list">

@@ -224,7 +224,7 @@ public class PostServiceImplementation implements PostService {
 
 
 
-    public ModelAndView filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
+    public Page<Post> filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
 
@@ -236,15 +236,7 @@ public class PostServiceImplementation implements PostService {
         } else{
             data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
         }
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("filteredPosts");
-        modelAndView.addObject("posts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-
+        return data;
     }
 
     @Override
