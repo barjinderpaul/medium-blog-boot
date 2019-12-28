@@ -2,9 +2,11 @@ package com.blog.medium.service;
 
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
+import com.blog.medium.model.User;
 import com.blog.medium.repository.CategoryRepository;
 import com.blog.medium.repository.FilterRepository;
 import com.blog.medium.repository.PostRepository;
+import com.blog.medium.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class FilterServiceImplementation implements FilterService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public Set<Post> search(String word, String word2) {
@@ -101,6 +106,7 @@ public class FilterServiceImplementation implements FilterService {
     }
 
 
+
     public ModelAndView filterPostsMethod(String tagName, String orderBy, String direction, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
@@ -121,6 +127,39 @@ public class FilterServiceImplementation implements FilterService {
         modelAndView.addObject("postsPage",data);
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
+
+    }
+
+    @Override
+    public Page<Post> getBlogPostsByUser(String userName, String orderBy, String direction, String page, String size) {
+
+        Integer pageNo = Integer.parseInt(page);
+        Integer pageSize = Integer.parseInt(size);
+
+        User user = userRepository.findUserByUsername(userName);
+        List<Post> userPosts = user.getPosts();
+
+        if (direction.equals("ASC")) {
+//            userPosts.sort(Comparator.comparing(Post::getCreateDateTime));
+            if (orderBy.equals("CreateDateTime")) {
+                userPosts.sort(Comparator.comparing(Post::getCreateDateTime));
+            } else {
+                userPosts.sort(Comparator.comparing(Post::getUpdateDateTime));
+            }
+            ;
+        }
+        if (direction.equals("DESC")) {
+            if (orderBy.equals("CreateDateTime")) {
+                userPosts.sort((Post s1, Post s2) -> s2.getCreateDateTime().compareTo(s1.getCreateDateTime()));
+            } else {
+                userPosts.sort((Post s1, Post s2) -> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
+            }
+        }
+        long start =  PageRequest.of(pageNo, pageSize).getOffset();
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > userPosts.size() ? userPosts.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(userPosts.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),userPosts.size());
+
+
 
     }
 

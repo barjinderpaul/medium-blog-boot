@@ -77,5 +77,25 @@ public class FilterController {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
+    @RequestMapping(value = "/posts/filter" , params = {"user"},method = RequestMethod.GET)
+    @ResponseBody
+    public ModelAndView getBlogPostsByUser( @RequestParam(value = "user", required = true, defaultValue = "admin") String userName,
+                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
+                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+
+        Page<Post> posts =  filterService.getBlogPostsByUser(userName, orderBy, direction, page, size);
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("filteredPosts");
+        modelAndView.addObject("posts",posts.getContent());
+        modelAndView.addObject("postsPage",posts);
+        modelAndView.addObject("numbers", IntStream.range(0,posts.getTotalPages()).toArray());
+        return modelAndView;
+
+
+    }
 
 }

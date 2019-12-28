@@ -67,7 +67,7 @@
     </p>
     <p>Filter by Author:
         <c:forEach items="${allUsers}" var="list">
-            <span> <a href="/posts/user/${list.username}/${list.id}" class="btn btn-outline-primary">${list.username}</a> </span>
+            <span> <a href="/posts/filter?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
         </c:forEach>
     </p>
     <br>
