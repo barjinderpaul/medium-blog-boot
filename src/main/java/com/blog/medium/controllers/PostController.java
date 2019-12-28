@@ -30,62 +30,26 @@ public class PostController {
     @Autowired
     UserService userService;
 
-
-/*    @RequestMapping(value = {"/"}, method= RequestMethod.GET)
-    public ModelAndView getBlogPosts(){
-
-       List<Post> allPosts = postService.getAllPosts();
-       List<Category> categories = categoryService.getAllTags();
-        System.out.println("SIZE ++++++ " + categories.size());
-
-        List<User> users = userService.getAllUsers();
-
-       ModelAndView modelAndView = new ModelAndView();
-       modelAndView.setViewName("blogPosts");
-       modelAndView.addObject("allCategories",categories);
-       modelAndView.addObject("allPosts",allPosts);
-       modelAndView.addObject("allUsers",users);
-
-       return modelAndView;
-    }*/
-
-    @RequestMapping(value = {"/posts/sort/publish"}, method= RequestMethod.GET)
-    public ModelAndView getBlogPostsSortedByPublishDate(){
-
-        List<Post> allPosts = postService.getAllPostsSortedByPublishDate();
+    @RequestMapping(value = "/",method = RequestMethod.GET)
+    public ModelAndView filterPostsHome(
+            @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+            @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+        Page data =  postService.getfilterPostsHomeMethod(page, size);
         List<Category> categories = categoryService.getAllTags();
         List<User> users = userService.getAllUsers();
 
         ModelAndView modelAndView = new ModelAndView();
+
         modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts",allPosts);
+        modelAndView.addObject("allPosts",data.getContent());
+        modelAndView.addObject("postsPage",data);
         modelAndView.addObject("allCategories",categories);
         modelAndView.addObject("allUsers",users);
-
+        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/posts/sort/update"}, method= RequestMethod.GET)
-    public ModelAndView getBlogPostsSortedByUpdationDate(){
-
-        List<Post> allPosts = postService.getAllPostsSortedByLastUpdate();
-        List<Category> categories = categoryService.getAllTags();
-        List<User> users = userService.getAllUsers();
-
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts",allPosts);
-        modelAndView.addObject("allCategories",categories);
-        modelAndView.addObject("allUsers",users);
-
-        return modelAndView;
-    }
-
-
-
-
-    @RequestMapping(value = "posts/add",method = RequestMethod.GET)
+     @RequestMapping(value = "posts/add",method = RequestMethod.GET)
     public ModelAndView redirectToCreatePost(){
         ModelAndView modelAndView = new ModelAndView();
 
@@ -95,8 +59,6 @@ public class PostController {
 
         return modelAndView;
     }
-
-
 
     @RequestMapping(value = "posts/add",method = RequestMethod.POST)
     public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories" , required = false) String[] categories) {
@@ -123,7 +85,6 @@ public class PostController {
     }
 
 
-
     @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
     public ModelAndView getPost(@PathVariable("id") Long id) {
 
@@ -137,7 +98,6 @@ public class PostController {
 
        return modelAndView;
     }
-
 
     @RequestMapping(value = "posts/delete/{id}", method = RequestMethod.GET)
     public ModelAndView redirectToDeletePage(@PathVariable("id") String id){
@@ -202,37 +162,13 @@ public class PostController {
         return "redirect:/posts/{id}";
     }
 
-/*
-* Filter controller mappings :
-* */
-
-    @RequestMapping(value = "/",method = RequestMethod.GET)
-    public ModelAndView filterPostsHome(
-            @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-            @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
-        System.out.println("IN FILTER POSTS");
-        Page data =  postService.getfilterPostsHomeMethod(page, size);
-        List<Category> categories = categoryService.getAllTags();
-        List<User> users = userService.getAllUsers();
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts",data.getContent());
-        modelAndView.addObject("postsPage",data);
-        modelAndView.addObject("allCategories",categories);
-        modelAndView.addObject("allUsers",users);
-        modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
-    }
-
     @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
     public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
 
         Set<Post> searchResults = postService.search(queryWord,queryWord);
+        Set<Post> postsWithCategoryContainingQueryWord = postService.getFromCategories(queryWord);
 
-        Set<Post> searchResults2 = postService.getFromCategories(queryWord);
-        searchResults.addAll(searchResults2);
+        searchResults.addAll(postsWithCategoryContainingQueryWord);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("blogPosts");
@@ -240,6 +176,10 @@ public class PostController {
 
         return modelAndView;
     }
+
+/*
+* Filter controller mappings :
+* */
 
 
     /*
