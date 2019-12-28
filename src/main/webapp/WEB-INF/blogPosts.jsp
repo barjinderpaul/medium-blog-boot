@@ -40,19 +40,25 @@
             </div>
             <div class="card-body bg-light">
                 <p class="card-text">
+
                     <c:choose>
                         <c:when test = "${list.content.length() < 77}"> ${list.content} </c:when>
                         <c:otherwise> ${fn:substring(list.content,0,77)} <span>...</span> </c:otherwise>
                     </c:choose>
+
                 </p>
+
                 <c:set var = "categories" scope = "session" value = "${list.getCategories()}"/>
+
                 <p class="font-weight-bold">Categories :
+
                     <c:forEach items="${categories}" var="category">
                         <span> <a href="/posts/filter?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
                     </c:forEach>
                     <c:if test="${fn:length(categories) lt 1}">
                         <span>No categories found</span>
                     </c:if>
+
                 </p>
                 <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
                 <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
