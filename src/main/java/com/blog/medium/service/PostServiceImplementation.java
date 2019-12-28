@@ -235,9 +235,21 @@ public class PostServiceImplementation implements PostService {
         Integer pageSize = Integer.parseInt(size);
 
         Page data = null;
-        if(!(username.equals("noUser"))) {
-            System.out.println("BY USERNAME");
-            data =  getBlogPostsByUser(username, orderBy, direction, page, size);
+        if(!(searchQuery.equals(""))){
+            data = search(searchQuery,searchQuery,searchQuery,orderBy,direction,pageNo,pageSize);
+        }
+        else if(tagName.contains(",") && !(username.equals("noUser"))) {
+            //Username with multiple categories.
+            if(operation.toLowerCase().equals("or")) {
+                data = getPostsWithUsernameAndMultipleTagsOrOperation(username, tagName, orderBy, direction, pageNo, pageSize);
+            }
+            else{
+                data = getPostsWithUsernameAndMultipleTagsAndOperation(username, tagName, orderBy, direction, pageNo, pageSize);
+            }
+        }
+        else if(tagName!= null && !(tagName.toLowerCase().equals("notag")) && !(username.equals("noUser"))){
+            //Username with single category.
+            data = getPostsWithUsernameAndTag(username,tagName,orderBy,direction,pageNo,pageSize);
         }
         else if(tagName.contains(",")){
             String [] categories = tagName.split(",");
@@ -249,17 +261,72 @@ public class PostServiceImplementation implements PostService {
                 data = postRepository.findDistinctByCategories_categoryNameIn(categories, pageable);
             }
         }
+        else if(!(username.equals("noUser"))) {
+            System.out.println("BY USERNAME");
+            data =  getBlogPostsByUser(username, orderBy, direction, page, size);
+        }
+
         else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             System.out.println("BY TAG NAME ");
             data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
 
-        }else if(!(searchQuery.equals(""))){
-            data = search(searchQuery,searchQuery,searchQuery,orderBy,direction,pageNo,pageSize);
         }else{
             System.out.println("BY ALL POSTS");
             data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
         }
         return data;
+    }
+
+    private Page<Post> getPostsWithUsernameAndTag(String username, String tagName, String orderBy, String direction, Integer pageNo, Integer pageSize){
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        return postRepository.findAllByUser_usernameAndCategories_categoryNameContains(username,tagName,pageable);
+    }
+
+    private Page<Post> getPostsWithUsernameAndMultipleTagsOrOperation(String username, String tagName, String orderBy, String direction, Integer pageNo, Integer pageSize){
+        String[] categories = tagName.split(",");
+
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        return postRepository.findAllByUser_usernameAndCategories_categoryNameIn(username,categories,pageable);
+    }
+
+    private Page<Post> getPostsWithUsernameAndMultipleTagsAndOperation(String username, String tagName, String orderBy, String direction, Integer pageNo, Integer pageSize){
+        String[] categories = tagName.split(",");
+
+        List<Post> allPosts = postRepository.findAll();
+        List<Category> categoryList = new ArrayList<>();
+        for(String categoryName: categories) {
+            Category category = categoryRepository.findByCategoryName(categoryName);
+            categoryList.add(category);
+        }
+
+        List<Post> allPostsWithAllCategories = new ArrayList<>();
+        for(Post post: allPosts){
+            if(post.getCategories().containsAll(categoryList) && post.getUser().getUsername().equals(username)){
+                allPostsWithAllCategories.add(post);
+            }
+        }
+
+        long start =  PageRequest.of(pageNo, pageSize).getOffset();
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
+
+
     }
 
     @Override
