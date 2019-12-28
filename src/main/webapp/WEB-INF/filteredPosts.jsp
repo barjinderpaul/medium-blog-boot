@@ -80,8 +80,14 @@
     <c:forEach items="${numbers}" var="pageNumber">
         <%
             String query = request.getQueryString();
-            String newQuery = query.replaceAll("page=[0-9]+", "page=" + pageContext.getAttribute("pageNumber"));
-            pageContext.setAttribute("newQuery",newQuery);
+            String newQuery = "";
+            if( !(query.contains("page")) ){
+                newQuery = query+"&page="+pageContext.getAttribute("pageNumber")+"&size=2";
+            }
+            else {
+                newQuery = query.replaceAll("page=[0-9]+", "page=" + pageContext.getAttribute("pageNumber"));
+            }
+            pageContext.setAttribute("newQuery", newQuery);
         %>
         <a href="/posts/filter?${newQuery}">${pageNumber + 1} </a>
     </c:forEach>

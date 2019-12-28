@@ -52,7 +52,7 @@ public class FilterController {
                                     @RequestParam(value = "orderBy", required = false, defaultValue = "UpdateDateTime") String orderBy,
                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                    @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+                                    @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
 
     }
@@ -63,7 +63,7 @@ public class FilterController {
                                      @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
                                      @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                      @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                     @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+                                     @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
@@ -73,7 +73,7 @@ public class FilterController {
                                                    @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
                                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                                   @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
         return filterService.filterPostsMethod(tagName, orderBy, direction, page, size);
     }
 
