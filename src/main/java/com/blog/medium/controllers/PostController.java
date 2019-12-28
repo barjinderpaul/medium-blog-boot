@@ -32,7 +32,7 @@ public class PostController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = {"/","/posts"}, method= RequestMethod.GET)
+    @RequestMapping(value = {"/"}, method= RequestMethod.GET)
     public ModelAndView getBlogPosts(){
 
        List<Post> allPosts = postService.getAllPosts();

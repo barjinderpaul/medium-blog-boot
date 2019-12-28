@@ -101,7 +101,9 @@ public class FilterServiceImplementation implements FilterService {
         }
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> data = postRepository.findAll(pageable);
+        System.out.println("order, direction, page, size = " + orderBy + " " + direction + " " + page + " " + size);
         System.out.println("PADASDASD DATAAA = " + data.getContent());
+        System.out.println("DATA CONTENT SIZE testing + " + data.getContent().size());
         return data;
     }
 
