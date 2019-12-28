@@ -25,4 +25,7 @@ public interface PostService {
     Page<Post> findAllByOrderBy(String orderBy, String direction, Integer pageNo, Integer pageSize);
     Page<Post> getBlogPostsByUser(String userName,String orderBy,String direction,String page, String size);
     Page<Post> getfilterPostsHomeMethod(String page, String size);
+
+    Page<Post> getPostsByMultipleTags(String[] tags, String orderBy, String direction, Integer pageNo, Integer pageSize);
+
 }

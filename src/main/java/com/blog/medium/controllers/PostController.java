@@ -58,6 +58,7 @@ public class PostController {
                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+
         Page<Post> data = postService.filterPostsMethod(username,tagName, orderBy, direction, page, size);
         ModelAndView modelAndView = new ModelAndView();
 
@@ -67,6 +68,22 @@ public class PostController {
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
     }
+
+    @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
+    public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
+
+        Set<Post> searchResults = postService.search(queryWord,queryWord);
+        Set<Post> postsWithCategoryContainingQueryWord = postService.getFromCategories(queryWord);
+
+        searchResults.addAll(postsWithCategoryContainingQueryWord);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("blogPosts");
+        modelAndView.addObject("allPosts", searchResults);
+
+        return modelAndView;
+    }
+
 
 
     @RequestMapping(value = "posts/add",method = RequestMethod.GET)
@@ -182,19 +199,5 @@ public class PostController {
         return "redirect:/posts/{id}";
     }
 
-    @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
-    public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
-
-        Set<Post> searchResults = postService.search(queryWord,queryWord);
-        Set<Post> postsWithCategoryContainingQueryWord = postService.getFromCategories(queryWord);
-
-        searchResults.addAll(postsWithCategoryContainingQueryWord);
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts", searchResults);
-
-        return modelAndView;
-    }
 
 }

@@ -231,6 +231,10 @@ public class PostServiceImplementation implements PostService {
             System.out.println("BY USERNAME");
             data =  getBlogPostsByUser(username, orderBy, direction, page, size);
         }
+        else if(tagName.contains(",")){
+            String [] categories = tagName.split(",");
+            data = getPostsByMultipleTags(categories,orderBy,direction,pageNo,pageSize);
+        }
         else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             System.out.println("BY TAG NAME ");
             data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
@@ -280,6 +284,23 @@ public class PostServiceImplementation implements PostService {
         Page data = postRepository.findAllByOrderByIdAsc(pageable);
 
         return data;
+    }
+
+    @Override
+    public Page<Post> getPostsByMultipleTags(String[] categories, String orderBy, String direction, Integer pageNo, Integer pageSize) {
+
+        Set<Post> postsWithCategories = new LinkedHashSet<>();
+        for(String categoryName : categories) {
+            Category category = categoryRepository.findByCategoryName(categoryName);
+            postsWithCategories.addAll(category.getPosts());
+        }
+        List<Post> userPosts = new ArrayList<>();
+        userPosts.addAll(postsWithCategories);
+        long start =  PageRequest.of(pageNo, pageSize).getOffset();
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > userPosts.size() ? userPosts.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(userPosts.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),userPosts.size());
+
+
     }
 
 }

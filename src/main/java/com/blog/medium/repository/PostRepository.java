@@ -25,4 +25,5 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     /*FilterRepository*/
     Set<Post> findAllByTitleContainingOrContentContaining(String word, String word2);
 
+
 }
