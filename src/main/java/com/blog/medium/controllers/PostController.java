@@ -59,22 +59,15 @@ public class PostController {
     @ResponseBody
     public ModelAndView filterPostsByCreationDate(@RequestParam(value = "operation",required = false,defaultValue = "and") String operation,
                                                   @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
+                                                  @RequestParam(value = "search",required = false,defaultValue = "") String searchQuery,
                                                   @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
                                                   @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
                                                   @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
 
-        System.out.println("TAGS +  + " + tagName);
-        Page<Post> data = postService.filterPostsMethod(username, tagName, orderBy, direction,operation, page, size);
+        Page<Post> data = postService.filterPostsMethod(username, tagName, orderBy, direction,operation, searchQuery,page, size);
 
-        /*Testing */
-        List<Post> categoryList = postRepository.findAllByCategories_categoryNameContains(tagName);
-//        List<Post> categoryListMultiple = postRepository.findAllByCategories_categoryNameIn(
-//                new String[] {"java","sql"});
-
-        System.out.println("POSTS +++ " + categoryList);
-//        System.out.println("MULTIPLE TAGS POST +++ " + categoryListMultiple);
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("filteredPosts");
@@ -83,19 +76,6 @@ public class PostController {
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
     }
-
-    @RequestMapping(value = "/posts/search", method = RequestMethod.GET)
-    public ModelAndView getSearchResults(@RequestParam("query") String queryWord) {
-        Set<Post> searchResults = postService.search(queryWord,queryWord,queryWord);
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("blogPosts");
-        modelAndView.addObject("allPosts", searchResults);
-
-        return modelAndView;
-    }
-
-
 
     @RequestMapping(value = "posts/add",method = RequestMethod.GET)
     public ModelAndView redirectToCreatePost(){

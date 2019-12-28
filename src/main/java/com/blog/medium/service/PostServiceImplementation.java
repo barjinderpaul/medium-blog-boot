@@ -144,8 +144,17 @@ public class PostServiceImplementation implements PostService {
     * Filter service implementations
     * */
 
-    public Set<Post> search(String titleWord, String contentWord, String categoryWord) {
-        return postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContains(titleWord, contentWord, categoryWord);
+    public Page<Post> search(String titleWord, String contentWord, String categoryWord, String orderBy,String direction,Integer pageNo, Integer pageSize) {
+
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        return postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContains(titleWord, contentWord, categoryWord,pageable);
     }
 
     @Override
@@ -221,7 +230,7 @@ public class PostServiceImplementation implements PostService {
 
 
 
-    public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String page, String size){
+    public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
 
@@ -243,7 +252,10 @@ public class PostServiceImplementation implements PostService {
         else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
             System.out.println("BY TAG NAME ");
             data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
-        } else{
+
+        }else if(!(searchQuery.equals(""))){
+            data = search(searchQuery,searchQuery,searchQuery,orderBy,direction,pageNo,pageSize);
+        }else{
             System.out.println("BY ALL POSTS");
             data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
         }

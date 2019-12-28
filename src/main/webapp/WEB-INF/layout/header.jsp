@@ -33,8 +33,8 @@
                 </a>
             </li>
             <li>
-                <form action="/posts/search">
-                    <input type="text" name="query" placeholder="Enter keyword">
+                <form action="/posts">
+                    <input type="text" name="search" placeholder="Enter keyword">
                     <input class="btn btn-primary" type="submit" value="Search">
                 </form>
             </li>
