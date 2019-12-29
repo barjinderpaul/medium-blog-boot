@@ -55,8 +55,11 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     Page<Post> findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(String username, String categoryName, String title, String username2, String categoryName2, String content, String username3, String categoryName3, String categoryToSearch,Pageable pageable
     );
 
-    /*Search with multiple categories provided*/
+    /*Search with multiple categories with user provided*/
     Page<Post> findByUser_usernameAndCategories_categoryNameInAndTitleContainingOrUser_usernameAndCategories_categoryNameInAndContentContainingOrUser_usernameAndCategories_categoryNameInAndCategories_categoryName(String username, String[] categoryNames, String title, String username2, String categoryNames2[], String content, String username3, String categoryNames3[], String categoryToSearch,Pageable pageable
     );
+
+    /*Search with multiple tags */
+    Page<Post> findDistinctByCategories_categoryNameInAndTitleContainsOrCategories_categoryNameInAndContentContains(String[] categoroes, String title, String []categories2, String content, Pageable pageable);
 
 }

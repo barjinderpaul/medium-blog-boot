@@ -252,7 +252,7 @@ public class PostServiceImplementation implements PostService {
         System.out.println("USERNAME MATCH OR NOT : " + username.toLowerCase() == "nouser");
         Page data = null;
         if(!(searchQuery.equals(""))){
-
+            System.out.println("IN SEARCH BLOCK ");
             if(tagName.contains(",") && !(username.toLowerCase().equals("nouser"))){
                 System.out.println("IN COMMA SEPARATED username , tag, query = " + username + " " + tagName + " " + searchQuery);
                 //Search with username and multiple categories: request params contain : search, username and category
@@ -277,6 +277,11 @@ public class PostServiceImplementation implements PostService {
                 System.out.println("USERNAME PROVIDED WITH SEARCH QUERY, username, query = " + username +" " + searchQuery);
                 Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
                 data = postRepository.findDistinctByUser_usernameAndTitleContainingOrUser_usernameAndContentContainingOrUser_usernameAndCategories_categoryNameContains(username,searchQuery,username,searchQuery,username,searchQuery,pageable);
+            }
+            else if(tagName.contains(",")){
+                String[] categories = tagName.split(",");
+                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                data = postRepository.findDistinctByCategories_categoryNameInAndTitleContainsOrCategories_categoryNameInAndContentContains(categories,searchQuery,categories,searchQuery,pageable);
             }
             else {
                 System.out.println("SEARCH QUERY USERNAME NOT PROVIDED");
