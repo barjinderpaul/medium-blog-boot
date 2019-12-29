@@ -17,20 +17,6 @@
 
 <div class="container">
     <h1>Welcome to Blog </h1>
-    <p>Sort by :
-        <span><a class="btn btn-outline-primary m-auto" href="/posts?orderBy=UpdateDateTime">Last Updation</a></span>
-        <span><a class="btn btn-outline-primary m-auto" href="/posts?orderBy=CreateDateTime">Last Published</a></span>
-    </p>
-    <p>Filter by Tag:
-        <c:forEach items="${allCategories}" var="list">
-           <span> <a href="/posts?tag=${list.categoryName}" class="btn btn-outline-primary">${list.categoryName}</a> </span>
-        </c:forEach>
-    </p>
-    <p>Filter by Author:
-        <c:forEach items="${allUsers}" var="list">
-            <span> <a href="/posts?user=${list.username}" class="btn btn-outline-primary">${list.username}</a> </span>
-        </c:forEach>
-    </p>
 
     <br>
     <c:forEach items="${allPosts}" var="list">
@@ -84,7 +70,7 @@
                 }
                 pageContext.setAttribute("newQuery", newQuery);
             %>
-            <a href="/?${newQuery}">${pageNumber + 1} </a>
+            <a class="btn btn-outline-dark" href="/?${newQuery}">${pageNumber + 1} </a>
         </c:forEach>
     </ul>
 

@@ -11,8 +11,13 @@
     <jsp:param name="title" value="Home Page"/>
 </jsp:include>
 <br>
-
-<c:forEach items="${posts}" var="list">
+<div class="container">
+    <h1>Welcome to Blog </h1>
+    <c:if test="${empty posts}">
+        <h4 class="my-4 text-danger">No posts found for specified query</h4>
+    </c:if>
+<div class="container">
+    <c:forEach items="${posts}" var="list">
     <div class="card">
         <div class="card-header bg-success">
                 ${list.title}
@@ -61,7 +66,7 @@
         <a href="/posts?${newQuery}">${pageNumber + 1} </a>
     </c:forEach>
 </ul>
-
+</div>
 
 
 <%@ include file="layout/footer.html"%>

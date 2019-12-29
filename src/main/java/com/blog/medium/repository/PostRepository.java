@@ -62,4 +62,7 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     /*Search with multiple tags */
     Page<Post> findDistinctByCategories_categoryNameInAndTitleContainsOrCategories_categoryNameInAndContentContains(String[] categoroes, String title, String []categories2, String content, Pageable pageable);
 
+    /*Search with single tag*/
+    Page<Post> findDistinctByCategories_categoryNameLikeAndTitleContainsOrCategories_categoryNameLikeAndContentContains(String tagName, String query, String tagNameRepeat, String queryRepeat, Pageable pageable);
+
 }

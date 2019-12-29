@@ -11,7 +11,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -22,15 +21,12 @@ public class PostServiceImplementation implements PostService {
 
     @Autowired
     private PostRepository<Post> postRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
 
     public List<Post> getAllPosts(){
-//        return (List<Post>) postRepository.findAllById(Collections.singleton(2L));
         return postRepository.findAllByOrderByIdAsc();
     }
 
@@ -40,6 +36,26 @@ public class PostServiceImplementation implements PostService {
 
     public List<Post> getAllPostsSortedByLastUpdate() {
         return postRepository.findAllByOrderByUpdateDateTimeDesc();
+    }
+
+
+    private Pageable getPageable(String orderBy, String direction, Integer pageNo, Integer pageSize) {
+        System.out.println("orderBy , direction, pageNo, pageSize = " + orderBy+ " " +direction +" " + pageNo +" " + pageSize);
+        Sort sort = null;
+        if (direction.equals("ASC")) {
+            sort = Sort.by(orderBy).ascending();
+        }
+        if (direction.equals("DESC")) {
+            sort = Sort.by(orderBy).descending();
+        }
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        return pageable;
+    }
+
+    private Page getCustomPage(Integer pageNo, Integer pageSize, List<Post> data){
+        long start =  PageRequest.of(pageNo, pageSize).getOffset();
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > data.size() ? data.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(data.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),data.size());
     }
 
 
@@ -55,11 +71,12 @@ public class PostServiceImplementation implements PostService {
 
     public  Long addPost(String title, String content, List<String> categories) {
 
-/*            User user = new User();
-            user.setEmail("admin@admin.com");
-            user.setUsername("admin");
-            user.setPassword("admin");*/
+    /*
+    No user exists:
+    User user = new User(); user.setEmail("admin@admin.com");user.setUsername("admin");user.setPassword("admin");
+    */
         Optional<User> userOptional = userRepository.findById(1L);
+
         User user = userOptional.get();
         Post post = new Post();
         post.setPublishedAt(LocalDateTime.now());
@@ -85,18 +102,13 @@ public class PostServiceImplementation implements PostService {
     }
 
     public  void updatePost(Long id, String title, String content, List<String> categoriesList) {
-
         Post postFromDB = postRepository.findById(id).get();
-
-//        User user = userRepository.findById(1L).get();
-//        user.getPosts().remove(postFromDB);
 
         postFromDB.setContent(content);
         postFromDB.setTitle(title);
 
         for(String categoryName: categoriesList) {
             Category category =  categoryRepository.findByCategoryName(categoryName);
-
             if(!(postFromDB.getCategories().contains(category))){
                 postFromDB.getCategories().add(category);
                 category.getPosts().add(postFromDB);
@@ -110,28 +122,12 @@ public class PostServiceImplementation implements PostService {
                 uncategorizedCategory.getPosts().remove(postFromDB);
             }
         }
-
-
-//        user.getPosts().add(postFromDB);
-//        Post post = new Post();
-//        post.setContent(content);
-//        post.setId(id);
-//        post.setTitle(title);
         postRepository.save(postFromDB);
-
     }
 
     public List<Post> findJsonDataByCondition(String orderBy, String direction, int page, int size) {
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(orderBy,direction,page,size);
         Page<Post> data = postRepository.findAll(pageable);
-        System.out.println("PADASDASD DATAAA = " + data.getContent());
         return data.getContent();
     }
 
@@ -140,21 +136,8 @@ public class PostServiceImplementation implements PostService {
         return null;
     }
 
-
-    /*
-    * Filter service implementations
-    * */
-
     public Page<Post> search(String titleWord, String contentWord, String categoryWord, String orderBy,String direction,Integer pageNo, Integer pageSize) {
-
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
         return postRepository.findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(titleWord, contentWord, categoryWord,pageable);
     }
 
@@ -206,159 +189,98 @@ public class PostServiceImplementation implements PostService {
                 listCategory.sort((Post s1, Post s2) -> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
             }
         }
-        long start =  PageRequest.of(pageNo, size).getOffset();
-        long end = (start + PageRequest.of(pageNo, size).getPageSize()) > listCategory.size() ? listCategory.size() : (start + PageRequest.of(pageNo, size).getPageSize());
-        return new PageImpl<Post>(listCategory.subList((int) start,(int) end),PageRequest.of(pageNo,size),listCategory.size());
-
+        return getCustomPage(pageNo,size,listCategory);
     }
 
     @Override
     public Page<Post> findAllByOrderBy(String orderBy, String direction, Integer page, Integer size) {
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = getPageable(orderBy,direction,page,size);
         Page<Post> data = postRepository.findAll(pageable);
-        System.out.println("order, direction, page, size = " + orderBy + " " + direction + " " + page + " " + size);
-        System.out.println("PADASDASD DATAAA = " + data.getContent());
-        System.out.println("DATA CONTENT SIZE testing + " + data.getContent().size());
         return data;
     }
-
-    private Pageable getPage(String orderBy, String direction, Integer pageNo, Integer pageSize) {
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        return pageable;
-    }
-
 
     public Page<Post> filterPostsMethod(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size){
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
-        System.out.println("IN FILTER POSTS");
-        System.out.println("TAGs param = " + tagName);
-        System.out.println("USERNAME = " + username);
-        System.out.println("CONTAINS COMMA OR NOT : " + tagName.contains(",") );
-        System.out.println("USERNAME MATCH OR NOT : " + username.toLowerCase() == "nouser");
         Page data = null;
         if(!(searchQuery.equals(""))){
-            System.out.println("IN SEARCH BLOCK ");
+            //Search with username and multiple categories: request params contain : search, username and category
             if(tagName.contains(",") && !(username.toLowerCase().equals("nouser"))){
-                System.out.println("IN COMMA SEPARATED username , tag, query = " + username + " " + tagName + " " + searchQuery);
-                //Search with username and multiple categories: request params contain : search, username and category
-                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
                 String[] categories = tagName.split(",");
-
-//                data = postRepository.findByUser_usernameAndCategories_categoryNameInAndTitleContainingOrUser_usernameAndCategories_categoryNameInAndContentContainingOrUser_usernameAndCategories_categoryNameInAndCategories_categoryName(username,categories,searchQuery,username, categories, searchQuery,username,categories, searchQuery, pageable);
-
                 data = getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(username,tagName,searchQuery,orderBy,direction,pageNo,pageSize);
-
-                System.out.println("IN COMMA DATA PAGES= " + data.getTotalPages());
             }
             //Search with username and category: request params contain : search, username and category
            else if( (!(username.toLowerCase().equals("nouser"))) && tagName!= null && !(tagName.toLowerCase().equals("notag"))){
-                System.out.println("SEARCH, USERNAME and TAG provided   " + searchQuery + " " + username + " " + tagName);
-                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
                   data = postRepository.findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(username,tagName,searchQuery,username, tagName, searchQuery,username,tagName, searchQuery, pageable);
             }
 
             //Search with username, request params contain : search and username
             else if( (!(username.toLowerCase().equals("nouser")))){
-                System.out.println("USERNAME PROVIDED WITH SEARCH QUERY, username, query = " + username +" " + searchQuery);
-                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
                 data = postRepository.findDistinctByUser_usernameAndTitleContainingOrUser_usernameAndContentContainingOrUser_usernameAndCategories_categoryNameContains(username,searchQuery,username,searchQuery,username,searchQuery,pageable);
             }
             else if(tagName.contains(",")){
                 String[] categories = tagName.split(",");
-                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
                 data = postRepository.findDistinctByCategories_categoryNameInAndTitleContainsOrCategories_categoryNameInAndContentContains(categories,searchQuery,categories,searchQuery,pageable);
             }
+
+            else if(tagName!= null && !(tagName.toLowerCase().equals("notag"))){
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
+                data = postRepository.findDistinctByCategories_categoryNameLikeAndTitleContainsOrCategories_categoryNameLikeAndContentContains(tagName,searchQuery,tagName,searchQuery,pageable);
+            }
             else {
-                System.out.println("SEARCH QUERY USERNAME NOT PROVIDED");
                 data = search(searchQuery, searchQuery, searchQuery, orderBy, direction, pageNo, pageSize);
             }
         }
+        //Username with multiple categories.
         else if(tagName.contains(",") && (!(username.toLowerCase().equals("nouser")))) {
-            System.out.println("IN MULTIPLE TAGs METHOD");
-            //Username with multiple categories.
             if(operation.toLowerCase().equals("or")) {
-                System.out.println("IN MULTIPLE TAGs or IF/ELSE");
                 data = getPostsWithUsernameAndMultipleTagsOrOperation(username, tagName, orderBy, direction, pageNo, pageSize);
             }
             else{
-                System.out.println("IN MULTIPLE TAGs AND IF/ELSE");
                 data = getPostsWithUsernameAndMultipleTagsAndOperation(username, tagName, orderBy, direction, pageNo, pageSize);
             }
         }
-        else if(tagName!= null && !(tagName.toLowerCase().equals("notag")) && !(username.equals("noUser"))){
-            //Username with single category.
-            System.out.println("SINGLE TAG METHOD");
 
+        //Username with single category.
+        else if(tagName!= null && !(tagName.toLowerCase().equals("notag")) && !(username.equals("noUser"))){
+            System.out.println("USER WITH SINGLE CATEGORY");
             data = getPostsWithUsernameAndTag(username,tagName,orderBy,direction,pageNo,pageSize);
         }
         else if(tagName.contains(",")){
-            System.out.println("MULTIPLE COMMA WITHOUT USERNAME");
-
             String [] categories = tagName.split(",");
             if(operation.toLowerCase().equals("and")) {
                 data = getPostsByMultipleTags(categories, orderBy, direction, pageNo, pageSize);
             }
             else if(operation.toLowerCase().equals("or")){
-                Pageable pageable = PageRequest.of(pageNo, pageSize);
+//                Pageable pageable = PageRequest.of(pageNo, pageSize);
+                Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
                 data = postRepository.findDistinctByCategories_categoryNameIn(categories, pageable);
             }
         }
         else if(!(username.equals("noUser"))) {
-
-            System.out.println("BY USERNAME");
             data =  getBlogPostsByUser(username, orderBy, direction, page, size);
         }
-
         else if( tagName!= null && !(tagName.toLowerCase().equals("notag"))){
-            System.out.println("BY TAG NAME ");
             data  = findDataByTagNameOrderBy(tagName, orderBy, direction, pageNo, pageSize);
-
         }else{
-            System.out.println("BY ALL POSTS");
-            data = findAllByOrderBy(orderBy, direction, pageNo, pageSize);
+            Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
+            data = postRepository.findAllByOrderByIdAsc(pageable);
         }
         return data;
     }
 
     private Page<Post> getPostsWithUsernameAndTag(String username, String tagName, String orderBy, String direction, Integer pageNo, Integer pageSize){
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
+        Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
         return postRepository.findAllByUser_usernameAndCategories_categoryNameContains(username,tagName,pageable);
     }
 
     private Page<Post> getPostsWithUsernameAndMultipleTagsOrOperation(String username, String tagName, String orderBy, String direction, Integer pageNo, Integer pageSize){
         String[] categories = tagName.split(",");
-
-        Sort sort = null;
-        if (direction.equals("ASC")) {
-            sort = Sort.by(orderBy).ascending();
-        }
-        if (direction.equals("DESC")) {
-            sort = Sort.by(orderBy).descending();
-        }
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = getPageable(orderBy,direction,pageNo,pageSize);
         return postRepository.findByUser_usernameAndCategories_categoryNameIn(username,categories,pageable);
     }
 
@@ -379,11 +301,7 @@ public class PostServiceImplementation implements PostService {
             }
         }
 
-        long start =  PageRequest.of(pageNo, pageSize).getOffset();
-        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
-        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
-
-
+        return getCustomPage(pageNo,pageSize,allPostsWithAllCategories);
     }
 
     @Override
@@ -411,10 +329,7 @@ public class PostServiceImplementation implements PostService {
                 userPosts.sort((Post s1, Post s2) -> s2.getUpdateDateTime().compareTo(s1.getUpdateDateTime()));
             }
         }
-        long start =  PageRequest.of(pageNo, pageSize).getOffset();
-        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > userPosts.size() ? userPosts.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
-        return new PageImpl<Post>(userPosts.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),userPosts.size());
-
+        return getCustomPage(pageNo,pageSize,userPosts);
     }
 
     public Page<Post> getfilterPostsHomeMethod(String page, String size) {
@@ -444,16 +359,11 @@ public class PostServiceImplementation implements PostService {
             }
         }
 
-        long start =  PageRequest.of(pageNo, pageSize).getOffset();
-        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
-        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
-
-
+        return getCustomPage(pageNo,pageSize,allPostsWithAllCategories);
     }
 
     private Page getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(String username, String tagName, String searchQuery, String orderBy, String direction, Integer pageNo, Integer pageSize){
 
-        System.out.println("username, tagName, searchQuery" + username+ " " +tagName+" " +searchQuery);
         String[] categories = tagName.split(",");
 
         List<Post> allPosts = postRepository.findAll();
@@ -470,10 +380,8 @@ public class PostServiceImplementation implements PostService {
                 allPostsWithAllCategories.add(post);
             }
         }
+        return getCustomPage(pageNo,pageSize,allPostsWithAllCategories);
 
-        long start =  PageRequest.of(pageNo, pageSize).getOffset();
-        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
-        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
     }
 
 }
