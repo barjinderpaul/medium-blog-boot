@@ -251,8 +251,18 @@ public class PostServiceImplementation implements PostService {
         System.out.println("USERNAME MATCH OR NOT : " + username.toLowerCase() == "nouser");
         Page data = null;
         if(!(searchQuery.equals(""))){
+
+            //Search with username and category: request params contain : search, username and category
+            if( (!(username.toLowerCase().equals("nouser"))) && tagName!= null && !(tagName.toLowerCase().equals("notag"))){
+                System.out.println("SEARCH, USERNAME and TAG provided   " + searchQuery + " " + username + " " + tagName);
+                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+//                data = postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_usernameAndCategories_categoryName(searchQuery,searchQuery,searchQuery,username,tagName,pageable);
+//                data = postRepository.findDistinctByUser_usernameAndCategories_categoryNameOrTitleContainingOrContentContaining(username,tagName,searchQuery,searchQuery,pageable);
+                  data = postRepository.findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(username,tagName,searchQuery,username, tagName, searchQuery,username,tagName, searchQuery, pageable);
+            }
+
             //Search with username, request params contain : search and username
-            if( (!(username.toLowerCase().equals("nouser")))){
+            else if( (!(username.toLowerCase().equals("nouser")))){
                 System.out.println("USERNAME PROVIDED WITH SEARCH QUERY, username, query = " + username +" " + searchQuery);
                 Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
                 data = postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_username(searchQuery,searchQuery,searchQuery,username,pageable);
