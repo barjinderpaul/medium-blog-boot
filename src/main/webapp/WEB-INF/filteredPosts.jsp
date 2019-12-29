@@ -16,6 +16,7 @@
     <div class="card">
         <div class="card-header bg-success">
                 ${list.title}
+                <span class="text-white float-right">${list.getUser().getUsername()}</span>
         </div>
         <div class="card-body bg-light">
             <p class="card-text">
@@ -27,7 +28,7 @@
             <c:set var = "categories" scope = "session" value = "${list.getCategories()}"/>
             <p class="font-weight-bold">Categories :
                 <c:forEach items="${categories}" var="category">
-                    <span> <a href="/posts/tag/${category.categoryName}/${category.category_id}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
+                    <span> <a href="/posts?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
                 </c:forEach>
                 <c:if test="${fn:length(categories) lt 1}">
                     <span>No categories found</span>

@@ -35,6 +35,20 @@ public class User {
     @Column(updatable = false)
     private Date createDateTime;
 
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", createDateTime=" + createDateTime +
+                ", updateDateTime=" + updateDateTime +
+                ", posts=" + posts +
+                '}';
+    }
+
     @LastModifiedDate
     private Date updateDateTime;
     @OneToMany(mappedBy="user")
