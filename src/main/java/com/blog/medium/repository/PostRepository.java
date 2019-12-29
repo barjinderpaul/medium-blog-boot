@@ -17,10 +17,15 @@ import java.util.Set;
 public interface PostRepository<P> extends JpaRepository<Post,Long> {
     List<P>  findAllByOrderByIdAsc();
     Page<P> findAllByOrderByIdAsc(Pageable pageable);
-//    Page<P> findAllByOrderByAsc(Pageable pageable);
     List<P> findAllByOrderByUpdateDateTimeDesc();
     List<P> findAllByOrderByPublishedAtDesc();
     Page<Post> findByCategories(String name, Pageable pageable);
+
+    /*findAllBy single tag*/
+    Page<Post> findAllByCategories_categoryNameLike(String category, Pageable pageable);
+
+    /*findALl posts by user*/
+    Page<Post> findAllByUser_username(String username, Pageable pageable);
 
     /*FilterRepository*/
     Page<Post> findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(String word, String word2, String categoryName,Pageable pageable);

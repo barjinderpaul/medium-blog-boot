@@ -38,19 +38,22 @@ public class PostController {
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-            @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
+            @RequestParam(value = "size",required = false ,defaultValue = "2") String size,
+            @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
+            @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction)
+    {
 
-        Page data =  postService.getfilterPostsHomeMethod(page, size);
-        List<Category> categories = categoryService.getAllTags();
-        List<User> users = userService.getAllUsers();
+        Page data =  postService.getAllPostsHome(page,size,orderBy,direction);
+/*        List<Category> categories = categoryService.getAllTags();
+        List<User> users = userService.getAllUsers(page,size,orderBy,direction);*/
 
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("blogPosts");
         modelAndView.addObject("allPosts",data.getContent());
-        modelAndView.addObject("postsPage",data);
+        modelAndView.addObject("postsPage",data);/*
         modelAndView.addObject("allCategories",categories);
-        modelAndView.addObject("allUsers",users);
+        modelAndView.addObject("allUsers",users);*/
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
         return modelAndView;
     }
@@ -66,7 +69,13 @@ public class PostController {
                                                   @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                   @RequestParam(value = "size",required = false ,defaultValue = "2") String size) {
 
-        Page<Post> data = postService.filterPostsMethod(username, tagName, orderBy, direction,operation, searchQuery,page, size);
+        Page<Post> data = null;
+        if(searchQuery.equals("")){
+             data = postService.filterPostsMethodWithoutSearch(username, tagName, orderBy, direction,operation,page, size);
+        }
+        else {
+            data = postService.filterPostsMethodBySearch(username, tagName, orderBy, direction, operation, searchQuery, page, size);
+        }
 
         ModelAndView modelAndView = new ModelAndView();
 
