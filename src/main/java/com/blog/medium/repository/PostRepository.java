@@ -38,8 +38,9 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     /*Search with user provided*/
     Page<Post> findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_username(String titleWord, String contentWord, String categoryName, String username, Pageable pageable);
 
-    /*Search with user and category provided*/
+    Page<Post> findDistinctByUser_usernameAndTitleContainingOrUser_usernameAndContentContainingOrUser_usernameAndCategories_categoryNameContains(String username,String titleWord,String username2, String contentWord,String username3 ,String categoryName, Pageable pageable);
 
+    /*Search with user and category provided*/
     /*
     *
     *   Basic property :
@@ -54,7 +55,8 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     Page<Post> findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(String username, String categoryName, String title, String username2, String categoryName2, String content, String username3, String categoryName3, String categoryToSearch,Pageable pageable
     );
 
-    Page<Post> findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_usernameAndCategories_categoryName(String titleWord, String contentWord, String categoryName, String username, String categoryNameExactSearch, Pageable pageable);
+    /*Search with multiple categories provided*/
+    Page<Post> findByUser_usernameAndCategories_categoryNameInAndTitleContainingOrUser_usernameAndCategories_categoryNameInAndContentContainingOrUser_usernameAndCategories_categoryNameInAndCategories_categoryName(String username, String[] categoryNames, String title, String username2, String categoryNames2[], String content, String username3, String categoryNames3[], String categoryToSearch,Pageable pageable
+    );
 
-    Page findDistinctByUser_usernameAndCategories_categoryNameOrTitleContainingOrContentContaining(String username, String categoryNameExactSearch, String titleWord, String contentWord, Pageable pageable);
 }

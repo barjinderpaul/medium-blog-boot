@@ -11,6 +11,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -252,12 +253,22 @@ public class PostServiceImplementation implements PostService {
         Page data = null;
         if(!(searchQuery.equals(""))){
 
+            if(tagName.contains(",") && !(username.toLowerCase().equals("nouser"))){
+                System.out.println("IN COMMA SEPARATED username , tag, query = " + username + " " + tagName + " " + searchQuery);
+                //Search with username and multiple categories: request params contain : search, username and category
+                Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
+                String[] categories = tagName.split(",");
+
+//                data = postRepository.findByUser_usernameAndCategories_categoryNameInAndTitleContainingOrUser_usernameAndCategories_categoryNameInAndContentContainingOrUser_usernameAndCategories_categoryNameInAndCategories_categoryName(username,categories,searchQuery,username, categories, searchQuery,username,categories, searchQuery, pageable);
+
+                data = getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(username,tagName,searchQuery,orderBy,direction,pageNo,pageSize);
+
+                System.out.println("IN COMMA DATA PAGES= " + data.getTotalPages());
+            }
             //Search with username and category: request params contain : search, username and category
-            if( (!(username.toLowerCase().equals("nouser"))) && tagName!= null && !(tagName.toLowerCase().equals("notag"))){
+           else if( (!(username.toLowerCase().equals("nouser"))) && tagName!= null && !(tagName.toLowerCase().equals("notag"))){
                 System.out.println("SEARCH, USERNAME and TAG provided   " + searchQuery + " " + username + " " + tagName);
                 Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
-//                data = postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_usernameAndCategories_categoryName(searchQuery,searchQuery,searchQuery,username,tagName,pageable);
-//                data = postRepository.findDistinctByUser_usernameAndCategories_categoryNameOrTitleContainingOrContentContaining(username,tagName,searchQuery,searchQuery,pageable);
                   data = postRepository.findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(username,tagName,searchQuery,username, tagName, searchQuery,username,tagName, searchQuery, pageable);
             }
 
@@ -265,14 +276,14 @@ public class PostServiceImplementation implements PostService {
             else if( (!(username.toLowerCase().equals("nouser")))){
                 System.out.println("USERNAME PROVIDED WITH SEARCH QUERY, username, query = " + username +" " + searchQuery);
                 Pageable pageable = getPage(orderBy,direction,pageNo,pageSize);
-                data = postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContainsAndUser_username(searchQuery,searchQuery,searchQuery,username,pageable);
+                data = postRepository.findDistinctByUser_usernameAndTitleContainingOrUser_usernameAndContentContainingOrUser_usernameAndCategories_categoryNameContains(username,searchQuery,username,searchQuery,username,searchQuery,pageable);
             }
             else {
                 System.out.println("SEARCH QUERY USERNAME NOT PROVIDED");
                 data = search(searchQuery, searchQuery, searchQuery, orderBy, direction, pageNo, pageSize);
             }
         }
-        else if(tagName.contains(",") && (!(username.toLowerCase() == "nouser"))) {
+        else if(tagName.contains(",") && (!(username.toLowerCase().equals("nouser")))) {
             System.out.println("IN MULTIPLE TAGs METHOD");
             //Username with multiple categories.
             if(operation.toLowerCase().equals("or")) {
@@ -433,6 +444,31 @@ public class PostServiceImplementation implements PostService {
         return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
 
 
+    }
+
+    private Page getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(String username, String tagName, String searchQuery, String orderBy, String direction, Integer pageNo, Integer pageSize){
+
+        System.out.println("username, tagName, searchQuery" + username+ " " +tagName+" " +searchQuery);
+        String[] categories = tagName.split(",");
+
+        List<Post> allPosts = postRepository.findAll();
+        List<Category> categoryList = new ArrayList<>();
+        for(String categoryName: categories) {
+            Category category = categoryRepository.findByCategoryName(categoryName);
+            categoryList.add(category);
+        }
+
+        List<Post> allPostsWithAllCategories = new ArrayList<>();
+        for(Post post: allPosts){
+            if(post.getCategories().containsAll(categoryList) && post.getUser().getUsername().toLowerCase().equals(username) &&( post.getTitle().contains(searchQuery) || post.getContent().contains(searchQuery))){
+                System.out.println("MATCH FOUND");
+                allPostsWithAllCategories.add(post);
+            }
+        }
+
+        long start =  PageRequest.of(pageNo, pageSize).getOffset();
+        long end = (start + PageRequest.of(pageNo, pageSize).getPageSize()) > allPostsWithAllCategories.size() ? allPostsWithAllCategories.size() : (start + PageRequest.of(pageNo, pageSize).getPageSize());
+        return new PageImpl<Post>(allPostsWithAllCategories.subList((int) start,(int) end),PageRequest.of(pageNo,pageSize),allPostsWithAllCategories.size());
     }
 
 }
