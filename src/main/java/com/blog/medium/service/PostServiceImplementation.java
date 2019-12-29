@@ -154,7 +154,7 @@ public class PostServiceImplementation implements PostService {
             sort = Sort.by(orderBy).descending();
         }
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        return postRepository.findDistinctByTitleContainingOrContentContainingOrCategories_categoryNameContains(titleWord, contentWord, categoryWord,pageable);
+        return postRepository.findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(titleWord, contentWord, categoryWord,pageable);
     }
 
     @Override
