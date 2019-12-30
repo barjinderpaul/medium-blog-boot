@@ -48,7 +48,6 @@ public class ApiRestController {
                                                     @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
                                                     @RequestParam(value = "page",required = false, defaultValue = "0") String page,
                                                     @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
-
         Page<Post> data = null;
         if(searchQuery.equals("")){
             data = postService.filterPostsMethodWithoutSearch(username, tagName, orderBy, direction,operation,page, size);

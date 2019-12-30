@@ -1,4 +1,5 @@
 package com.blog.medium.service;
+import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
 import com.blog.medium.model.User;
@@ -196,12 +197,24 @@ public class PostServiceImplementation implements PostService {
         return postRepository.findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(searchQuery, searchQuery, searchQuery, pageable);
     }
 
+    /*
+    * Check for exceptions
+    * */
+
+    public void checkNullAndValidArguments(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size){
+        if( !(username.toLowerCase().equals("nouser")) && !(username.equals("admin")) ){
+            System.out.println("here");
+            throw new NotFoundException("Specified user does not exist");
+        }
+    }
 
     public Page<Post> filterPostsMethodBySearch(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size) {
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
+
+        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, searchQuery, page, size);
 
         Page data = null;
         if (tagName.contains(",") && !(username.toLowerCase().equals("nouser"))) {
