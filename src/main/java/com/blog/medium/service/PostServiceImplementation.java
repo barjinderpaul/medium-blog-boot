@@ -123,14 +123,6 @@ public class PostServiceImplementation implements PostService {
         return new PageImpl<Post>(data.subList((int) start, (int) end), PageRequest.of(pageNo, pageSize), data.size());
     }
 
-    @Override
-    public Page<Post> findAllByOrderBy(String orderBy, String direction, Integer page, Integer size) {
-        Pageable pageable = getPageable(orderBy, direction, page, size);
-        Page<Post> data = postRepository.findAll(pageable);
-        return data;
-    }
-
-
     /*
      * filter posts by search methods:
      * */
