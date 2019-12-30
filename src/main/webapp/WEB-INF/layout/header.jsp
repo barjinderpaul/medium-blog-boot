@@ -89,6 +89,7 @@
                             <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
 
+                    </div>
                 </div>
             </li>
             <li class="nav-item active">
