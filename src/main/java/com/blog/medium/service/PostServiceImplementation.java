@@ -103,6 +103,34 @@ public class PostServiceImplementation implements PostService {
         return post_id;
     }
 
+    @Override
+    public Long updatePostPatch(Long id, String title, String content, String[] categories) {
+        System.out.println("TITLE, CONTENT, Categories = " + title + " " + content + " " + categories);
+        Post post = postRepository.findById(id).get();
+        if(!(title.equals(""))){
+            System.out.println("Title here");
+            post.setTitle(title);
+        }
+        if(!(content.equals(""))){
+            System.out.println("Content here");
+            post.setContent(content);
+        }
+        System.out.println("NEW TITLE, CONTENT = " + post.getTitle() + " " + post.getContent());
+        Set<Category> categoriesPresent = post.getCategories();
+        if(categories!= null && categories.length > 0) {
+            for (String categoryName : categories) {
+                Category category = categoryRepository.findByCategoryName(categoryName);
+                if (!(categoriesPresent.contains(category))) {
+                    categoriesPresent.add(category);
+                    category.getPosts().add(post);
+                }
+            }
+        }
+
+        Long post_id = postRepository.save(post).getId();
+        return post_id;
+    }
+
     /* Filter operations */
 
     private Pageable getPageable(String orderBy, String direction, Integer pageNo, Integer pageSize) {
@@ -176,7 +204,6 @@ public class PostServiceImplementation implements PostService {
         String[] categories = tagName.split(",");
 
         Page data = null;
-
         if (tagName.contains(",") && !(username.toLowerCase().equals("nouser"))) {
             data = getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(username, tagName, searchQuery, orderBy, direction, pageNo, pageSize);
         } else if ((!(username.toLowerCase().equals("nouser"))) && tagName != null && !(tagName.toLowerCase().equals("notag"))) {

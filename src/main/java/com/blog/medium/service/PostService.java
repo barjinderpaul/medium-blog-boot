@@ -13,6 +13,7 @@ public interface PostService {
     Long addPost(String title, String content, List<String> categoriesList);
     void deletePost(Long id);
     Long updatePost(Long id, String title, String content, List<String> categoriesList);
+    Long updatePostPatch(Long id,String title,String content,String [] categories);
 
     Page<Post> filterPostsMethodWithoutSearch(String username, String tagName, String orderBy, String direction, String operation, String page, String size);
 

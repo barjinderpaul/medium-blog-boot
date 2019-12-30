@@ -54,7 +54,7 @@ public interface PostRepository<P> extends JpaRepository<Post,Long> {
     *   Custom Property :
     *   A /\ B /\ (C \/ D \/ E) <==> (A /\ B /\ C ) \/ (A /\ B /\ D ) \/ (A /\ B /\ C)
     *   A and B and (C or D or E ) <==> (A and B and C) or (A and B and D) or (A and B and E)
-    *   Username and Category (title or content or category)
+    *   Username and Category and (title or content or category)
     * */
     Page<Post> findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(String username, String categoryName, String title, String username2, String categoryName2, String content, String username3, String categoryName3, String categoryToSearch,Pageable pageable
     );

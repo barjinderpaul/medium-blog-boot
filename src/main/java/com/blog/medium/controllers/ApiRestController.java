@@ -8,6 +8,7 @@ import com.blog.medium.service.PostService;
 import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,13 +41,13 @@ public class ApiRestController {
     @RequestMapping(value = "/api/posts" ,method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public List<Post> filterPostsByCreationDate(@RequestParam(value = "operation",required = false,defaultValue = "and") String operation,
-                                                  @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
-                                                  @RequestParam(value = "search",required = false,defaultValue = "") String searchQuery,
-                                                  @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
-                                                  @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
-                                                  @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
-                                                  @RequestParam(value = "page",required = false, defaultValue = "0") String page,
-                                                  @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
+                                                    @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
+                                                    @RequestParam(value = "search",required = false,defaultValue = "") String searchQuery,
+                                                    @RequestParam(value = "tag", required = false, defaultValue = "noTag") String tagName,
+                                                    @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
+                                                    @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction,
+                                                    @RequestParam(value = "page",required = false, defaultValue = "0") String page,
+                                                    @RequestParam(value = "size",required = false ,defaultValue = "10") String size) {
 
         Page<Post> data = null;
         if(searchQuery.equals("")){
@@ -91,10 +92,18 @@ public class ApiRestController {
         else{
             categoriesList = new ArrayList<>();
         }
-
         Long post_id = postService.updatePost(id,title,content,categoriesList);
         Post post = postService.getPost(post_id);
         return post;
+    }
+
+    @PatchMapping("/api/posts/update/{id}")
+    public Post updatePostPatch(@PathVariable("id") Long id , @RequestParam(value = "title", required = false, defaultValue = "") String title, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "categories" , required = false) String[] categories){
+
+        System.out.println("title, content in repository = " + title + "  " + content);
+        Long post_id = postService.updatePostPatch(id,title,content,categories);
+        return postService.getPost(post_id);
+
     }
 
 
