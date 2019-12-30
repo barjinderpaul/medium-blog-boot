@@ -8,9 +8,11 @@ import com.blog.medium.repository.UserRepository;
 import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.PostService;
 import com.blog.medium.service.UserService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,6 +23,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 @Controller
+//@RestController
 public class PostController {
 
     @Autowired
@@ -35,7 +38,7 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
 
-    @RequestMapping(value = "/",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.GET, produces = {"application/json"})
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
             @RequestParam(value = "size",required = false ,defaultValue = "2") String size,
@@ -55,6 +58,22 @@ public class PostController {
         modelAndView.addObject("allCategories",categories);
         modelAndView.addObject("allUsers",users);*/
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
+        return modelAndView;
+
+//        return data.getContent();
+    }
+
+    @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
+    public ModelAndView getPost(@PathVariable("id") Long id) {
+
+        Post post = postService.getPost(id);
+        Set<Category> categorySet = post.getCategories();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("singlePost");
+        modelAndView.addObject("post",post);
+        modelAndView.addObject("categorySet",categorySet);
+
         return modelAndView;
     }
 
@@ -122,19 +141,7 @@ public class PostController {
     }
 
 
-    @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
-    public ModelAndView getPost(@PathVariable("id") Long id) {
 
-       Post post = postService.getPost(id);
-       Set<Category> categorySet = post.getCategories();
-
-       ModelAndView modelAndView = new ModelAndView();
-       modelAndView.setViewName("singlePost");
-       modelAndView.addObject("post",post);
-       modelAndView.addObject("categorySet",categorySet);
-
-       return modelAndView;
-    }
 
     @RequestMapping(value = "posts/delete/{id}", method = RequestMethod.GET)
     public ModelAndView redirectToDeletePage(@PathVariable("id") String id){

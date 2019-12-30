@@ -2,6 +2,7 @@ package com.blog.medium.model;
 
 import javax.persistence.*;
 import com.blog.medium.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -50,10 +51,9 @@ public class Post {
 
     @LastModifiedDate
     private Date updateDateTime;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id" , insertable = true , updatable = false)
+    @JsonIgnore
     public User user;
 
     public User getUser() {

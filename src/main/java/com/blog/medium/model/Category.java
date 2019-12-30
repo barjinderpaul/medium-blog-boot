@@ -1,5 +1,6 @@
 package com.blog.medium.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -48,6 +49,7 @@ public class Category {
 
     @ManyToMany(fetch = FetchType.LAZY ,mappedBy = "categories")
     @OrderBy("post_id")
+    @JsonIgnore
     private Set<Post> posts = new LinkedHashSet<>();
 
     public Set<Post> getPosts() {

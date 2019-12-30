@@ -78,7 +78,7 @@ public class PostServiceImplementation implements PostService {
         postRepository.deleteById(id);
     }
 
-    public void updatePost(Long id, String title, String content, List<String> categoriesList) {
+    public Long updatePost(Long id, String title, String content, List<String> categoriesList) {
         Post postFromDB = postRepository.findById(id).get();
 
         postFromDB.setContent(content);
@@ -99,7 +99,8 @@ public class PostServiceImplementation implements PostService {
                 uncategorizedCategory.getPosts().remove(postFromDB);
             }
         }
-        postRepository.save(postFromDB);
+        Long post_id = postRepository.save(postFromDB).getId();
+        return post_id;
     }
 
     /* Filter operations */
