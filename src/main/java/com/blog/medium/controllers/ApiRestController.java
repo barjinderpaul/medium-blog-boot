@@ -1,5 +1,6 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
 import com.blog.medium.repository.PostRepository;
@@ -7,6 +8,7 @@ import com.blog.medium.service.CategoryService;
 import com.blog.medium.service.PostService;
 import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,9 @@ public class ApiRestController {
             data = postService.filterPostsMethodBySearch(username, tagName, orderBy, direction, operation, searchQuery, page, size);
         }
 
+        if(data.getContent().size() == 0){
+            throw new NotFoundException("No posts found for specifc query");
+        }
         return data.getContent();
     }
 

@@ -7,6 +7,7 @@ import com.blog.medium.repository.CategoryRepository;
 import com.blog.medium.repository.PostRepository;
 
 import com.blog.medium.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.*;
 
 @Service("PostService")
 @Transactional
+@Slf4j
 public class PostServiceImplementation implements PostService {
 
     @Autowired
@@ -44,7 +46,12 @@ public class PostServiceImplementation implements PostService {
 
     public Post getPost(Long id) {
         Optional<Post> post = postRepository.findById(id);
-        return post.isPresent() ? post.get() : null;
+        if( !(post.isPresent() ) ){
+                throw new NotFoundException("No post find which id + " + id);
+
+
+        }
+        return post.get();
     }
 
     public Long addPost(String title, String content, List<String> categories) {
@@ -76,12 +83,21 @@ public class PostServiceImplementation implements PostService {
     }
 
     public void deletePost(Long id) {
+
+        Optional<Post> optionalPost = postRepository.findById(id);
+
+        if(!(optionalPost.isPresent() ) ){
+            throw new NotFoundException("No post find which id + " + id);
+        }
         postRepository.deleteById(id);
     }
 
     public Long updatePost(Long id, String title, String content, List<String> categoriesList) {
-        Post postFromDB = postRepository.findById(id).get();
-
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if(!(optionalPost.isPresent())){
+                throw new NotFoundException("No post find which id + " + id);
+        }
+        Post postFromDB = optionalPost.get();
         postFromDB.setContent(content);
         postFromDB.setTitle(title);
 
@@ -108,6 +124,12 @@ public class PostServiceImplementation implements PostService {
     public Long updatePostPatch(Long id, String title, String content, String[] categories) {
         System.out.println("TITLE, CONTENT, Categories = " + title + " " + content + " " + categories);
         Post post = postRepository.findById(id).get();
+
+        if(post == null ){
+            throw new NotFoundException("No post find which id + " + id);
+        }
+
+
         if(!(title.equals(""))){
             System.out.println("Title here");
             post.setTitle(title);
@@ -201,11 +223,46 @@ public class PostServiceImplementation implements PostService {
     * Check for exceptions
     * */
 
-    public void checkNullAndValidArguments(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size){
+    public void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
+
         if( !(username.toLowerCase().equals("nouser")) && !(username.equals("admin")) ){
-            System.out.println("here");
+            log.debug("Username not found");
             throw new NotFoundException("Specified user does not exist");
         }
+        else if(category.contains(",")){
+            String[] categories = category.split(",");
+            for(String categoryName: categories){
+                Category categoryDB = categoryRepository.findByCategoryName(categoryName);
+                if(categoryDB == null ){
+                    throw new NotFoundException("No such categories exist");
+                }
+            }
+        }
+        else if(!(category.equals("noTag"))){
+            if(category == null) {
+                throw new NotFoundException("No such category found");
+            }
+            else{
+                Category categoryDB = categoryRepository.findByCategoryName(category);
+                if(categoryDB == null){
+                    throw  new NotFoundException("No such category found");
+                }
+            }
+        }
+
+        if(Integer.parseInt(size) > 25){
+            throw new NotFoundException("Posts fetch size should be less than 25");
+        }
+        if(( !(direction.equals("ASC")) && (!(direction.equals("DESC"))) )) {
+            throw new NotFoundException("Direction/Sort By not valid");
+        }
+        if((!(orderBy.equals("CreateDateTime")) && !(orderBy.equals("UpdateDateTime")))){
+            throw new NotFoundException("Order By is not valid");
+        }
+        if((!(operation.equals("and")) && !(operation.equals("or")))){
+            throw new NotFoundException("operation not valid");
+        }
+
     }
 
     public Page<Post> filterPostsMethodBySearch(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size) {
@@ -214,7 +271,10 @@ public class PostServiceImplementation implements PostService {
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
 
-        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, searchQuery, page, size);
+        if(searchQuery==null){
+            throw new NotFoundException("Search query should not be null");
+        }
+        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
 
         Page data = null;
         if (tagName.contains(",") && !(username.toLowerCase().equals("nouser"))) {
@@ -314,6 +374,9 @@ public class PostServiceImplementation implements PostService {
         Integer pageSize = Integer.parseInt(size);
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
+
+        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
+
 
         Page data = null;
 
