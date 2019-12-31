@@ -89,12 +89,12 @@ public class ApiRestController {
 
     }
 
-    @RequestMapping(value = "/api/posts/delete/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/posts/{id}",method = RequestMethod.DELETE)
     public void deletePost(@PathVariable("id") Long id) {
         postService.deletePost(id);
     }
 
-    @RequestMapping(value = "/api/posts/update/{id}",method = RequestMethod.PUT)
+    @RequestMapping(value = "/api/posts/{id}",method = RequestMethod.PUT)
     public Post updatePost(@PathVariable("id") String id, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "content", required = false) String content, @RequestParam(value = "categories", required = false) String[] categories) {
 
         if(title == null){
@@ -116,7 +116,7 @@ public class ApiRestController {
         return post;
     }
 
-    @PatchMapping("/api/posts/update/{id}")
+    @PatchMapping("/api/posts/{id}")
     public Post updatePostPatch(@PathVariable("id") String id , @RequestParam(value = "title", required = false, defaultValue = "") String title, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "categories" , required = false) String[] categories){
 
         System.out.println("title, content in repository = " + title + "  " + content);

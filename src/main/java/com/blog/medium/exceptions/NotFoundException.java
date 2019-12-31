@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class NotFoundException extends RuntimeException {
 
     public NotFoundException(String message) {
-
-        super(message);
-        log.trace(message);
-    }
+       super(message);
+     }
 }
