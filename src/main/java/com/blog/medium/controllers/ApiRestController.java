@@ -1,5 +1,6 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
@@ -35,7 +36,7 @@ public class ApiRestController {
     PostRepository postRepository;
 
     @RequestMapping(value = "/api/posts/{id}",method = RequestMethod.GET, produces = {"application/json"})
-    public Post getPost(@PathVariable("id") Long id) {
+    public Post getPost(@PathVariable("id") String id) {
         Post post = postService.getPost(id);
         return post;
     }
@@ -65,7 +66,14 @@ public class ApiRestController {
     }
 
     @RequestMapping(value = "/api/posts",method = RequestMethod.POST)
-    public Post addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories" , required = false) String[] categories) {
+    public Post addPost(@RequestParam(value = "title", required = false) String title, @RequestParam(value = "content" , required = false) String content, @RequestParam(value = "categories" , required = false) String[] categories) {
+
+        if(title == null){
+            throw new InvalidArgumentException("title cannot be null");
+        }
+        if(content == null) {
+            throw new InvalidArgumentException("content cannot be null");
+        }
 
         List<String> categoriesList;
         if(categories != null) {
@@ -76,7 +84,7 @@ public class ApiRestController {
             categoriesList.add("uncategorized");
         }
         Long post_id = postService.addPost(title,content,categoriesList);
-        Post post = postService.getPost(post_id);
+        Post post = postService.getPost(post_id.toString());
         return post;
 
     }
@@ -87,7 +95,14 @@ public class ApiRestController {
     }
 
     @RequestMapping(value = "/api/posts/update/{id}",method = RequestMethod.PUT)
-    public Post updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories", required = false) String[] categories) {
+    public Post updatePost(@PathVariable("id") String id, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "content", required = false) String content, @RequestParam(value = "categories", required = false) String[] categories) {
+
+        if(title == null){
+            throw new InvalidArgumentException("title cannot be null");
+        }
+        if(content == null) {
+            throw new InvalidArgumentException("content cannot be null");
+        }
 
         List<String> categoriesList;
         if(categories != null) {
@@ -97,16 +112,16 @@ public class ApiRestController {
             categoriesList = new ArrayList<>();
         }
         Long post_id = postService.updatePost(id,title,content,categoriesList);
-        Post post = postService.getPost(post_id);
+        Post post = postService.getPost(post_id.toString());
         return post;
     }
 
     @PatchMapping("/api/posts/update/{id}")
-    public Post updatePostPatch(@PathVariable("id") Long id , @RequestParam(value = "title", required = false, defaultValue = "") String title, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "categories" , required = false) String[] categories){
+    public Post updatePostPatch(@PathVariable("id") String id , @RequestParam(value = "title", required = false, defaultValue = "") String title, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "categories" , required = false) String[] categories){
 
         System.out.println("title, content in repository = " + title + "  " + content);
         Long post_id = postService.updatePostPatch(id,title,content,categories);
-        return postService.getPost(post_id);
+        return postService.getPost(post_id.toString());
 
     }
 

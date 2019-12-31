@@ -64,7 +64,7 @@ public class PostController {
     }
 
     @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
-    public ModelAndView getPost(@PathVariable("id") Long id) {
+    public ModelAndView getPost(@PathVariable("id") String id) {
 
         Post post = postService.getPost(id);
         Set<Category> categorySet = post.getCategories();
@@ -145,9 +145,8 @@ public class PostController {
 
     @RequestMapping(value = "posts/delete/{id}", method = RequestMethod.GET)
     public ModelAndView redirectToDeletePage(@PathVariable("id") String id){
-        Long postId = Long.parseLong(id);
 
-        Post post = postService.getPost(postId);
+        Post post = postService.getPost(id);
 
         String content = post.getContent();
         String title = post.getTitle();
@@ -155,7 +154,7 @@ public class PostController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("deletePost");
         modelAndView.addObject("customAction","addPost");
-        modelAndView.addObject("id",postId);
+        modelAndView.addObject("id",Long.parseLong(id));
         modelAndView.addObject("content",content);
         modelAndView.addObject("title",title);
 
@@ -171,9 +170,8 @@ public class PostController {
 
     @RequestMapping(value = "posts/update/{id}" ,method = RequestMethod.GET)
     public ModelAndView redirectToUpdatePost( @PathVariable("id") String id) {
-        Long postId = Long.parseLong(id);
 
-        Post post = postService.getPost(postId);
+        Post post = postService.getPost(id);
         Set<Category> categorySet = post.getCategories();
         String content = post.getContent();
         String title = post.getTitle();
@@ -183,7 +181,7 @@ public class PostController {
         modelAndView.addObject("heading","Update Post");
         modelAndView.addObject("customAction","updatePost");
         modelAndView.addObject("content","some-sample-content");
-        modelAndView.addObject("id",postId);
+        modelAndView.addObject("id",Long.parseLong(id));
         modelAndView.addObject("content",content);
         modelAndView.addObject("title",title);
         modelAndView.addObject("categorySet",categorySet);
@@ -192,7 +190,7 @@ public class PostController {
     }
 
     @RequestMapping(value = "posts/update/{id}",method = RequestMethod.POST)
-    public String updatePost(@PathVariable("id") Long id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories", required = false) String[] categories) {
+    public String updatePost(@PathVariable("id") String id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories", required = false) String[] categories) {
 
         List<String> categoriesList;
         if(categories != null) {

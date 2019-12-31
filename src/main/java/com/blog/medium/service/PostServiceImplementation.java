@@ -45,8 +45,15 @@ public class PostServiceImplementation implements PostService {
 
     /* CRUD Operations */
 
-    public Post getPost(Long id) {
-        Optional<Post> post = postRepository.findById(id);
+    public Post getPost(String id) {
+        Long post_id;
+        try {
+            post_id = Long.parseLong(id);
+        }
+        catch (NumberFormatException e){
+            throw new InvalidArgumentException("Please, enter a valid id");
+        }
+        Optional<Post> post = postRepository.findById(post_id);
         if( !(post.isPresent() ) ){
             throw new NotFoundException("GET: No post found with id + " + id);
         }
@@ -54,7 +61,6 @@ public class PostServiceImplementation implements PostService {
     }
 
     public Long addPost(String title, String content, List<String> categories) {
-
     /*
     No user exists:
     User user = new User(); user.setEmail("admin@admin.com");user.setUsername("admin");user.setPassword("admin");
@@ -72,10 +78,12 @@ public class PostServiceImplementation implements PostService {
         post.setContent(content);
         post.setUser(user);
 
+        System.out.println("Categories = " + categories.toString());
+
         for (String category : categories) {
             Category categoryFound = categoryRepository.findByCategoryName(category);
             if(categoryFound == null){
-                throw new NotFoundException("No category: " + category + " exists");
+                throw new NotFoundException("Please, enter a valid category. No category: " + category + " exists");
             }
             categoryFound.getPosts().add(post);
             post.getCategories().add(categoryFound);
@@ -97,10 +105,18 @@ public class PostServiceImplementation implements PostService {
         postRepository.deleteById(id);
     }
 
-    public Long updatePost(Long id, String title, String content, List<String> categoriesList) {
-        Optional<Post> optionalPost = postRepository.findById(id);
+    public Long updatePost(String id, String title, String content, List<String> categoriesList) {
+
+        Long postId;
+        try{
+            postId = Long.parseLong(id);
+        }catch (NumberFormatException e){
+            throw new InvalidArgumentException("Id: " + id +" is not a valid id" );
+        }
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
         if(!(optionalPost.isPresent())){
-                throw new NotFoundException("PUT : No post found with id + " + id);
+                throw new NotFoundException("PUT : No post found with id + " + postId);
         }
         Post postFromDB = optionalPost.get();
         postFromDB.setContent(content);
@@ -129,10 +145,18 @@ public class PostServiceImplementation implements PostService {
     }
 
     @Override
-    public Long updatePostPatch(Long id, String title, String content, String[] categories) {
-        Optional postOptional = postRepository.findById(id);
+    public Long updatePostPatch(String id, String title, String content, String[] categories) {
+
+        Long postId;
+        try{
+            postId = Long.parseLong(id);
+        }catch (NumberFormatException e){
+            throw new InvalidArgumentException("Id: " + id +" is not a valid id" );
+        }
+
+        Optional postOptional = postRepository.findById(postId);
         if(!(postOptional.isPresent())){
-            throw new NotFoundException("PATCH : No post found with id + " + id);
+            throw new NotFoundException("PATCH : No post found with id + " + postId);
         }
         Post post = (Post) postOptional.get();
         if(!(title.equals(""))){
@@ -386,7 +410,6 @@ public class PostServiceImplementation implements PostService {
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
 
-//        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
 
 
         Page data = null;

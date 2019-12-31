@@ -9,11 +9,11 @@ import java.util.Set;
 
 public interface PostService {
     List<Post> getAllPosts();
-    Post getPost(Long id);
+    Post getPost(String id);
     Long addPost(String title, String content, List<String> categoriesList);
     void deletePost(Long id);
-    Long updatePost(Long id, String title, String content, List<String> categoriesList);
-    Long updatePostPatch(Long id,String title,String content,String [] categories);
+    Long updatePost(String id, String title, String content, List<String> categoriesList);
+    Long updatePostPatch(String id,String title,String content,String [] categories);
 
     Page<Post> filterPostsMethodWithoutSearch(String username, String tagName, String orderBy, String direction, String operation, String page, String size);
 
