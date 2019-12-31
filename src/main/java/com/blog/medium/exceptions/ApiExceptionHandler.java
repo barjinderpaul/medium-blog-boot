@@ -16,7 +16,7 @@ public class ApiExceptionHandler {
         ErrorMessage errorMessage = new ErrorMessage(
                 404,
                 e.getMessage(),
-                "Go to /swagger-ui.html#/ for the documentation",
+                "Go to localhost:8080/swagger-ui.html#/ for the documentation",
                 HttpStatus.NOT_FOUND
         );
         log.error("Not found error",e);
