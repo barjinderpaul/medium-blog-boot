@@ -10,6 +10,15 @@ public class ErrorMessage {
     private int errorCode;
     private String errorMessage;
     private String documentation;
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
+    }
+
     private HttpStatus httpStatus;
 
     public ErrorMessage(){

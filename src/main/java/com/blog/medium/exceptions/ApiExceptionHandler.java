@@ -29,7 +29,7 @@ public class ApiExceptionHandler {
         ErrorMessage errorMessage = new ErrorMessage(
             400,
             e.getMessage(),
-            "Go to /swagger-ui.html#/ for the documentation",
+            "Go to localhost:8080/swagger-ui.html#/ for the documentation",
             HttpStatus.BAD_REQUEST
         );
         log.error("Invalid Arguments passed",e);
@@ -42,7 +42,7 @@ public class ApiExceptionHandler {
         ErrorMessage errorMessage = new ErrorMessage(
                 500,
                 e.getMessage(),
-                "Go to /swagger-ui.html#/ for the documentation",
+                "Go to localhost:8080/swagger-ui.html#/ for the documentation",
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
         log.error("Some unknown exception occured, please check stack trace",e);
