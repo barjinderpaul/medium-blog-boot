@@ -56,7 +56,13 @@ public class PostServiceImplementation implements PostService {
         }
     }
 
-    public void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
+    private void checkValidCategory(Category category) {
+        if(category == null){
+            throw new NotFoundException("Please, enter a valid category. No category: " + category + " exists");
+        }
+    }
+
+    private void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
 
         if( !(username.toLowerCase().equals("nouser")) && !(username.equals("admin")) ){
             throw new NotFoundException("User: '" + username + "' does not exist");
@@ -137,9 +143,7 @@ public class PostServiceImplementation implements PostService {
 
         for (String category : categories) {
             Category categoryFound = categoryRepository.findByCategoryName(category);
-            if(categoryFound == null){
-                throw new NotFoundException("Please, enter a valid category. No category: " + category + " exists");
-            }
+            checkValidCategory(categoryFound);
             categoryFound.getPosts().add(post);
             post.getCategories().add(categoryFound);
         }
@@ -174,9 +178,7 @@ public class PostServiceImplementation implements PostService {
 
         for (String categoryName : categoriesList) {
             Category category = categoryRepository.findByCategoryName(categoryName);
-            if(category == null) {
-                throw new NotFoundException("Category : " + categoryName + " not found");
-            }
+            checkValidCategory(category);
             if (!(postFromDB.getCategories().contains(category))) {
                 postFromDB.getCategories().add(category);
                 category.getPosts().add(postFromDB);
@@ -217,16 +219,13 @@ public class PostServiceImplementation implements PostService {
         if(categories!= null && categories.length > 0) {
             for (String categoryName : categories) {
                 Category category = categoryRepository.findByCategoryName(categoryName);
-                if(category == null) {
-                    throw new NotFoundException("No such category: " + categoryName + " exists");
-                }
+                checkValidCategory(category);
                 if (!(categoriesPresent.contains(category))) {
                     categoriesPresent.add(category);
                     category.getPosts().add(post);
                 }
             }
         }
-
         Long post_id = postRepository.save(post).getId();
         return post_id;
     }
@@ -263,6 +262,7 @@ public class PostServiceImplementation implements PostService {
         List<Category> categoryList = new ArrayList<>();
         for (String categoryName : categories) {
             Category category = categoryRepository.findByCategoryName(categoryName);
+            checkValidCategory(category);
             categoryList.add(category);
         }
 
