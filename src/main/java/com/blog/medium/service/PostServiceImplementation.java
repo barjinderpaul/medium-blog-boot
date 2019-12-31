@@ -42,10 +42,11 @@ public class PostServiceImplementation implements PostService {
         return postRepository.findAllByOrderByUpdateDateTimeDesc();
     }
 
+    /*
+    * Exception checks
+    * */
 
-    /* CRUD Operations */
-
-    public Post getPost(String id) {
+    private void checkValidId(String id){
         Long post_id;
         try {
             post_id = Long.parseLong(id);
@@ -53,7 +54,61 @@ public class PostServiceImplementation implements PostService {
         catch (NumberFormatException e){
             throw new InvalidArgumentException("Please, enter a valid id");
         }
-        Optional<Post> post = postRepository.findById(post_id);
+    }
+
+    public void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
+
+        if( !(username.toLowerCase().equals("nouser")) && !(username.equals("admin")) ){
+            throw new NotFoundException("User: '" + username + "' does not exist");
+        }
+        else if(category.contains(",")){
+            String[] categories = category.split(",");
+            for(String categoryName: categories){
+                Category categoryDB;
+                try {
+                    categoryDB = categoryRepository.findByCategoryName(categoryName);
+                }
+                catch (NotFoundException e) {
+                    throw new InvalidArgumentException("Category: " + categoryName + " does not exists");
+                }
+            }
+        }
+        else if(!(category.equals("noTag"))){
+            if(category == null) {
+                throw new InvalidArgumentException("No category: " + category +" exists");
+            }
+            else{
+                Category categoryDB = categoryRepository.findByCategoryName(category);
+                if(categoryDB == null){
+                    throw new InvalidArgumentException("No category: "+ category +" exists");
+                }
+            }
+        }
+
+        if(Integer.parseInt(size) > 25){
+            throw new NotFoundException("Posts fetch size should be less than 25");
+        }
+        if(( !(direction.equals("ASC")) && (!(direction.equals("DESC"))) )) {
+            throw new InvalidArgumentException("Direction/Sort By: " + direction + " is not valid");
+        }
+        if((!(orderBy.equals("CreateDateTime")) && !(orderBy.equals("UpdateDateTime")))){
+            throw new InvalidArgumentException("Order By: " + orderBy + " is not valid");
+        }
+        if((!(operation.equals("and")) && !(operation.equals("or")))){
+            throw new InvalidArgumentException("operation: " + operation + " not valid");
+        }
+
+    }
+
+
+    /* CRUD Operations */
+
+    public Post getPost(String id) {
+
+        checkValidId(id);
+        Long postId = Long.parseLong(id);
+
+        Optional<Post> post = postRepository.findById(postId);
         if( !(post.isPresent() ) ){
             throw new NotFoundException("GET: No post found with id + " + id);
         }
@@ -106,13 +161,8 @@ public class PostServiceImplementation implements PostService {
     }
 
     public Long updatePost(String id, String title, String content, List<String> categoriesList) {
-
-        Long postId;
-        try{
-            postId = Long.parseLong(id);
-        }catch (NumberFormatException e){
-            throw new InvalidArgumentException("Id: " + id +" is not a valid id" );
-        }
+        checkValidId(id);
+        Long postId = Long.parseLong(id);
 
         Optional<Post> optionalPost = postRepository.findById(postId);
         if(!(optionalPost.isPresent())){
@@ -147,12 +197,8 @@ public class PostServiceImplementation implements PostService {
     @Override
     public Long updatePostPatch(String id, String title, String content, String[] categories) {
 
-        Long postId;
-        try{
-            postId = Long.parseLong(id);
-        }catch (NumberFormatException e){
-            throw new InvalidArgumentException("Id: " + id +" is not a valid id" );
-        }
+        checkValidId(id);
+        Long postId = Long.parseLong(id);
 
         Optional postOptional = postRepository.findById(postId);
         if(!(postOptional.isPresent())){
@@ -248,54 +294,6 @@ public class PostServiceImplementation implements PostService {
 
     private Page<Post> getPostsWithSearch(String searchQuery, String orderBy, String direction, Integer pageNo, Integer pageSize, Pageable pageable) {
         return postRepository.findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(searchQuery, searchQuery, searchQuery, pageable);
-    }
-
-    /*
-    * Check for exceptions
-    * */
-
-    public void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
-
-        if( !(username.toLowerCase().equals("nouser")) && !(username.equals("admin")) ){
-            throw new NotFoundException("User: '" + username + "' does not exist");
-        }
-        else if(category.contains(",")){
-            String[] categories = category.split(",");
-            for(String categoryName: categories){
-                Category categoryDB;
-                try {
-                    categoryDB = categoryRepository.findByCategoryName(categoryName);
-                }
-                catch (NotFoundException e) {
-                    throw new InvalidArgumentException("Category: " + categoryName + " does not exists");
-                }
-            }
-        }
-        else if(!(category.equals("noTag"))){
-            if(category == null) {
-                throw new InvalidArgumentException("No category: " + category +" exists");
-            }
-            else{
-                Category categoryDB = categoryRepository.findByCategoryName(category);
-                if(categoryDB == null){
-                    throw new InvalidArgumentException("No category: "+ category +" exists");
-                }
-            }
-        }
-
-        if(Integer.parseInt(size) > 25){
-            throw new NotFoundException("Posts fetch size should be less than 25");
-        }
-        if(( !(direction.equals("ASC")) && (!(direction.equals("DESC"))) )) {
-            throw new InvalidArgumentException("Direction/Sort By: " + direction + " is not valid");
-        }
-        if((!(orderBy.equals("CreateDateTime")) && !(orderBy.equals("UpdateDateTime")))){
-            throw new InvalidArgumentException("Order By: " + orderBy + " is not valid");
-        }
-        if((!(operation.equals("and")) && !(operation.equals("or")))){
-            throw new InvalidArgumentException("operation: " + operation + " not valid");
-        }
-
     }
 
     public Page<Post> filterPostsMethodBySearch(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size) {
