@@ -1,6 +1,6 @@
-<%--<jsp:include page="layout/header.jsp" >
+<jsp:include page="layout/header.jsp" >
     <jsp:param name="title" value="Home Page"/>
-</jsp:include>--%>
+</jsp:include>
 
 <div class="container m-4 p-4">
     <h1>Something went wrong! </h1>

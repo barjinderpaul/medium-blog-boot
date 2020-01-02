@@ -104,14 +104,42 @@
                 </a>
             </li>
             <li class="nav-item active">
-                <sec:authentication var="principal" property="principal" />
-                <a class="nav-link btn btn-outline-primary" href="/posts?user=${principal.username}">
-                   ${principal.username}
-                </a>
+                <c:set var = "currentUser" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getName()%>"/>
+                <c:if test="${currentUser != 'anonymousUser'}">
+                    <a class="nav-link btn btn-outline-primary" href="/posts?user=${currentUser}">
+                       ${currentUser}
+                    </a>
+                </c:if>
             </li>
-            <li class="nav-item active">
+<%--            <li class="nav-item active">
+                <c:if test="${currentUser != 'anonymousUser'}">
                 <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
                     ${currentUserRole}
+                </c:if>
+            </li>--%>
+            <li class="nav-item active">
+                <c:if test="${currentUser == 'anonymousUser'}">
+                    <a class="mx-2 nav-link btn btn-outline-primary" href="/login">
+                            Login
+                    </a>
+                </c:if>
+            </li>
+            <li class="nav-item active">
+                <c:if test="${currentUser == 'anonymousUser'}">
+                    <a class=" mx-2 nav-link btn btn-outline-primary" href="/register">
+                           Register
+                    </a>
+                </c:if>
+            </li>
+            <li class="nav-item active">
+                <c:if test="${currentUser != 'anonymousUser'}">
+                    <a class=" mx-2 btn btn-warning" href="/logout">Logout</a>
+                </c:if>
+            </li>
+            <li class="nav-item active">
+                <c:if test="${currentUser == 'anonymousUser'}">
+                     <a class=" mx-2 btn btn-warning" href="/forgot-password">Forgot Password</a>
+                </c:if>
             </li>
 
         </ul>
