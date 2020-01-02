@@ -1,3 +1,6 @@
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <html>
 <head>
@@ -84,8 +87,6 @@
                                 <label for="search">Search Keyword</label>
                                 <input type="text" class="form-control" name="search" id="search">
                             </div>
-
-
                             <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
 
@@ -101,6 +102,17 @@
                 <a class="nav-link" href="/posts/add">
                     <p>Create Post</p>
                 </a>
+            </li>
+            <li class="nav-item active">
+                <sec:authentication var="principal" property="principal" />
+                <a class="nav-link btn btn-outline-primary" href="/posts?user=${principal.username}">
+                   ${principal.username}
+                </a>
+            </li>
+            <li class="nav-item active">
+                <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
+                    ${currentUserRole}
+
             </li>
 
         </ul>

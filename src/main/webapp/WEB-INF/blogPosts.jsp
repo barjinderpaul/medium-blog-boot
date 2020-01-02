@@ -20,10 +20,7 @@
 
 <div class="container">
     <h1>Welcome to Blog </h1>
-    <div>
-<%--        <sec:authentication var="principal" property="principal" />
-        ${principal.username}--%>
-    </div>
+
     <br>
     <c:forEach items="${allPosts}" var="list">
         <div class="card">
