@@ -55,7 +55,7 @@ public class LoginController {
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(password));
 
-        Role userRole = roleRepository.findByRoleName("USERNAME");
+        Role userRole = roleRepository.findByRoleName("USER");
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(userRole);
         user.setRoles(userRoles);

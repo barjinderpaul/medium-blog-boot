@@ -1,7 +1,9 @@
 
+<%--
 <jsp:include page="layout/header.jsp" >
     <jsp:param name="title" value="Register"/>
 </jsp:include>
+--%>
 
 <%
     if(session.getAttribute("Username") != null ) {
