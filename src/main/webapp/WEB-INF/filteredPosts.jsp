@@ -74,7 +74,7 @@
             }
             pageContext.setAttribute("newQuery", newQuery);
         %>
-        <a href="/posts?${newQuery}">${pageNumber + 1} </a>
+        <a  class="btn btn-outline-dark" href="/posts?${newQuery}">${pageNumber + 1} </a>
     </c:forEach>
 </ul>
 </div>

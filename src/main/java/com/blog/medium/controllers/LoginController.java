@@ -124,15 +124,19 @@ public class LoginController {
     }
 
 
+/*
 //    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/admin/add")
-    public String addUserAsAdmin(/*@RequestParam("name") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("roles") String[] roles*/ @RequestBody User user) {
+    public String addUserAsAdmin(*/
+/*@RequestParam("name") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("roles") String[] roles*//*
+ @RequestBody User user) {
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         return "User added successfully";
     }
+*/
 
     @GetMapping("/forgot-password")
     public ModelAndView forgotPassword(){
@@ -159,7 +163,7 @@ public class LoginController {
         mailMessage.setSubject("Forgot Password");
         mailMessage.setFrom("ibennysingh@gmail.com");
         mailMessage.setText("To reset your account password, please click here : "
-                +"localhost:8080/forget-account-password?token="+confirmationToken.getConfirmationToken());
+                +"https://cedium.herokuapp.com/forget-account-password?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
 

@@ -38,17 +38,12 @@ public class ScheduledTasks {
     private static final Integer tenMinutes = 600000;
     private static final Integer oneMinute = 1000*60;
 
-    @Scheduled(fixedRate = 5000)
-    public void reportCurrentTime() {
-        log.info("The time is now {}", dateFormat.format(new Date()));
-    }
-
-    @Scheduled(fixedRate = 1000*60)
+    @Scheduled(fixedRate = 1000*60*5)
     @Transactional
     public void removeTokens(){
         List<ConfirmationToken> confirmationTokenList = confirmationTokenRepository.findAll();
         confirmationTokenList.forEach(token->{
-            if( new Date().getTime() - token.getCreatedDate().getTime() >= oneMinute ){
+            if( new Date().getTime() - token.getCreatedDate().getTime() >= tenMinutes ){
                 log.debug("Deleting token with id: " + token.getTokenid());
                 confirmationTokenRepository.deleteConfirmationTokenByTokenid(token.getTokenid());
             }

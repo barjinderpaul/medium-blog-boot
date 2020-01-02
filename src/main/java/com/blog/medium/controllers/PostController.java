@@ -38,7 +38,7 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
 
-    @RequestMapping(value = "/",method = RequestMethod.GET, produces = {"application/json"})
+    @GetMapping(value = "/")
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
             @RequestParam(value = "size",required = false ,defaultValue = "2") String size,
@@ -77,7 +77,8 @@ public class PostController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/posts" ,method = RequestMethod.GET)
+
+    @RequestMapping(value = {"/posts","/posts/","/posts?"} ,method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPostsByCreationDate(@RequestParam(value = "operation",required = false,defaultValue = "and") String operation,
                                                   @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
