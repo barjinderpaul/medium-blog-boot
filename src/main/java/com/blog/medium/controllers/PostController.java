@@ -204,5 +204,22 @@ public class PostController {
         return "redirect:/posts/{id}";
     }
 
+    @GetMapping(value="/posts/category")
+    public ModelAndView createCategoryModel(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("addCategory");
+        return modelAndView;
+    }
+    @PostMapping(value="/posts/category")
+    public ModelAndView addCategory(@RequestParam("category") String category){
+        ModelAndView modelAndView = new ModelAndView();
+
+        Long id = categoryService.save(category);
+
+        modelAndView.setViewName("addCategory");
+        modelAndView.addObject("category",category);
+
+        return modelAndView;
+    }
 
 }

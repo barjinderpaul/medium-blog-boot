@@ -10,4 +10,6 @@ public interface CategoryService {
     List<Category> getAllTags();
     Category getCategory(Long id);
     List<Post> findJsonDataByCondition(Long id, String categoryName,String orderBy, String direction, int page, int size);
+
+    Long save(String category);
 }
