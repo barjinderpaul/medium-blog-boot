@@ -1,0 +1,1 @@
+Successfully registered, please confirm mail id${emailId}

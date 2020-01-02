@@ -1,6 +1,8 @@
 package com.blog.medium.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +16,15 @@ import java.util.*;
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public class User {
+
+    public User() {
+        super();
+        this.isEnabled=false;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", updatable = true, nullable = false)
@@ -36,6 +46,8 @@ public class User {
     @Column(updatable = false)
     private Date createDateTime;
 
+    @Column(name = "enabled")
+    private Boolean isEnabled;
 
     @Override
     public String toString() {
