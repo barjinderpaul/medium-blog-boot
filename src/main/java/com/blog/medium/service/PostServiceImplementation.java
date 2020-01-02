@@ -11,6 +11,8 @@ import com.blog.medium.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,13 +128,20 @@ public class PostServiceImplementation implements PostService {
     No user exists:
     User user = new User(); user.setEmail("admin@admin.com");user.setUsername("admin");user.setPassword("admin");
     */
+
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUsername = null;
+        if(username!= null){
+            currentUsername = userRepository.findByUsername(username);
+        }
         Optional<User> userOptional = userRepository.findById(1L);
 /*
         if(!(userOptional.isPresent())){
             throw new NotFoundException("User with id = " + id + " not found");
         }
 */
-        User user = userOptional.get();
+        User user = currentUsername;
         Post post = new Post();
         post.setPublishedAt(LocalDateTime.now());
         post.setTitle(title);

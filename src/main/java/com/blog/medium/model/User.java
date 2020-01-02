@@ -56,6 +56,26 @@ public class User {
     @OrderBy("post_id")
     private List<Post> posts = new ArrayList<>();
 
+/*
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id",unique = false), inverseJoinColumns = @JoinColumn(name = "role_id",unique = false))
+    private Set<Role> roles = new HashSet<>();*/
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "userRole",
+            joinColumns = { @JoinColumn(name = "user_id", unique = false) },
+            inverseJoinColumns = { @JoinColumn(name = "role_id", unique = false) })
+    private Set<Role> roles = new LinkedHashSet<>();
+
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public Long getId() {
         return id;
     }

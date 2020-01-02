@@ -1,8 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <%@ page import="com.blog.medium.model.Post" %>
-<%@ page import="java.util.Arrays" %><%--
+<%@ page import="java.util.Arrays" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %><%--
   Created by IntelliJ IDEA.
   User: barjinder
   Date: 21/12/19
@@ -17,7 +20,10 @@
 
 <div class="container">
     <h1>Welcome to Blog </h1>
-
+    <div>
+<%--        <sec:authentication var="principal" property="principal" />
+        ${principal.username}--%>
+    </div>
     <br>
     <c:forEach items="${allPosts}" var="list">
         <div class="card">
@@ -47,8 +53,17 @@
 
                 </p>
                 <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
-                <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
-                <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+                <c:set var = "currentUser" scope = "session" value = "<%= SecurityContextHolder.getContext().getAuthentication().getName() %>"/>
+                <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
+
+                <c:if test = "${ (list.getUser().getUsername() == currentUser ) || currentUserRole == '[ROLE_ADMIN]'}">
+                    <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
+                </c:if>
+
+                <c:if test = "${(list.getUser().getUsername() == currentUser)  || currentUserRole == '[ROLE_ADMIN]'}">
+                    <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+                </c:if>
+
 
             </div>
         </div>

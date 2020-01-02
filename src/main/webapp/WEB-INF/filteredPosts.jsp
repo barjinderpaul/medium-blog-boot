@@ -1,3 +1,4 @@
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%--
@@ -40,8 +41,18 @@
                 </c:if>
             </p>
             <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
-            <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
-            <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+
+            <c:set var = "currentUser" scope = "session" value = "<%= SecurityContextHolder.getContext().getAuthentication().getName() %>"/>
+            <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
+
+            <c:if test = "${ (list.getUser().getUsername() == currentUser ) || currentUserRole == '[ROLE_ADMIN]'}">
+                <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
+            </c:if>
+
+            <c:if test = "${(list.getUser().getUsername() == currentUser)  || currentUserRole == '[ROLE_ADMIN]'}">
+                <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+            </c:if>
+
 
         </div>
     </div>

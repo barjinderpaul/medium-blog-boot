@@ -46,7 +46,6 @@ public class Category {
     @LastModifiedDate
     private Date updateDateTime;
 
-
     @ManyToMany(fetch = FetchType.LAZY ,mappedBy = "categories")
     @OrderBy("post_id")
     @JsonIgnore

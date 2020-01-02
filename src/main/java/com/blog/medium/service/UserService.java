@@ -9,4 +9,5 @@ public interface UserService {
 //    List<Post> getUserPosts(Long id);
     User getUserById(Long id);
     List<User> getAllUsers();
+    User save(User user);
 }
