@@ -13,13 +13,15 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<jsp:include page="layout/header.jsp" >
+<%--<jsp:include page="layout/header.jsp" >
     <jsp:param name="title" value="Home Page"/>
-</jsp:include>
+</jsp:include>--%>
 <br>
 
 <div class="container">
     <h1>Welcome to Blog </h1>
+
+    <p><a class="btn btn-warning" href="/forgot-password">Forgot Password</a></p>
 
     <br>
     <c:forEach items="${allPosts}" var="list">

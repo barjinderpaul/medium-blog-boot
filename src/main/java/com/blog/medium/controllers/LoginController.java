@@ -107,7 +107,6 @@ public class LoginController {
     public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
     {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-
         if(token != null)
         {
             User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
@@ -133,5 +132,75 @@ public class LoginController {
         userRepository.save(user);
 
         return "User added successfully";
+    }
+
+    @GetMapping("/forgot-password")
+    public ModelAndView forgotPassword(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("forgotPassword");
+        return modelAndView;
+    }
+
+    @PostMapping("/forgot-password")
+    public ModelAndView resetPassword(@RequestParam("username") String username){
+        ModelAndView modelAndView = new ModelAndView();
+        User user = userRepository.findByUsername(username);
+        if(user==null){
+            modelAndView.addObject("message","The link is invalid or broken!");
+            modelAndView.setViewName("error");
+        }
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+        confirmationTokenRepository.save(confirmationToken);
+
+        System.out.println("HEREREREERE + " );
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Forgot Password");
+        mailMessage.setFrom("ibennysingh@gmail.com");
+        mailMessage.setText("To reset your account password, please click here : "
+                +"localhost:8080/forget-account-password?token="+confirmationToken.getConfirmationToken());
+
+        emailSenderService.sendEmail(mailMessage);
+
+        modelAndView.addObject("message", "Password reset link sent on " +user.getEmail() + " .");
+
+        modelAndView.setViewName("messagePage");
+        return modelAndView;
+    }
+
+    @GetMapping("/forget-account-password")
+    public ModelAndView setNewPassword(ModelAndView modelAndView, @RequestParam("token")String confirmationToken){
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+        if(token != null)
+        {
+            User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
+            modelAndView.addObject("username",user.getUsername());
+            modelAndView.setViewName("setNewPassword");
+        }
+        else
+        {
+            modelAndView.addObject("message","The link is invalid or broken!");
+            modelAndView.setViewName("error");
+        }
+
+        return modelAndView;
+    }
+
+    @PostMapping("/forget-account-password")
+    public ModelAndView setPassword(@RequestParam("username")String username, @RequestParam("password") String password){
+        User user = userRepository.findByUsername(username);
+        ModelAndView modelAndView = new ModelAndView();
+        if(user == null ){
+            modelAndView.addObject("message","Invalid User!");
+            modelAndView.setViewName("error");
+        }
+        else{
+            user.setPassword(bCryptPasswordEncoder.encode(password));
+            userRepository.save(user);
+            modelAndView.setViewName("messagePage");
+            modelAndView.addObject("message","Password chnaged successfully");
+        }
+        return modelAndView;
     }
 }

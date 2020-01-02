@@ -112,7 +112,6 @@
             <li class="nav-item active">
                 <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
                     ${currentUserRole}
-
             </li>
 
         </ul>
