@@ -42,7 +42,7 @@
                         Filter
                     </button>
                     <div class="dropdown-menu">
-                        <form id="my-form" class="px-4 py-3" method="GET" action="posts">
+                        <form id="my-form" class="px-4 py-3" method="GET" action="/posts">
                         <p>Tags:</p>
                             <div class="form-check">
                                 <input type="checkbox"class="form-check-input" name="tag" value="spring">
@@ -94,7 +94,7 @@
                 </div>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/?">
+                <a class="nav-link" href="/">
                     <p>Home</p>
                 </a>
             </li>

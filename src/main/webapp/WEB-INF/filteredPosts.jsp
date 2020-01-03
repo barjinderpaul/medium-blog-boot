@@ -64,7 +64,10 @@
     <c:set var = "queryString" value = "<%=request.getQueryString()%>"/>
     <c:forEach items="${numbers}" var="pageNumber">
         <%
-            String query = request.getQueryString();
+            String query = "";
+            if( !(request.getQueryString() == null)){
+                query = request.getQueryString();
+            }
             String newQuery = "";
             if( !(query.contains("page")) ){
                 newQuery = query+"&page="+pageContext.getAttribute("pageNumber")+"&size=2";

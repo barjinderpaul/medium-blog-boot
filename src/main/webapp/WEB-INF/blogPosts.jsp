@@ -5,7 +5,8 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <%@ page import="com.blog.medium.model.Post" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %><%--
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="java.util.ArrayList" %><%--
   Created by IntelliJ IDEA.
   User: barjinder
   Date: 21/12/19
@@ -70,12 +71,14 @@
     </c:forEach>
 
     <ul>
-        <c:set var = "queryString" value = "<%=request.getQueryString()%>"/>
         <c:forEach items="${numbers}" var="pageNumber">
             <%
-                String query = request.getQueryString();
+                String query = "";
+                if( !(request.getQueryString() == null)){
+                    query = request.getQueryString();
+                }
                 String newQuery = "";
-                if( !(query.contains("page")) ){
+                 if(!(query.contains("page")) ){
                     newQuery = query+"&page="+pageContext.getAttribute("pageNumber")+"&size=2";
                 }
                 else {

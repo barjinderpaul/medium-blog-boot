@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,13 +40,15 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
 
-    @GetMapping(value = "/")
+    @RequestMapping(value = "/")
     public ModelAndView filterPostsHome(
             @RequestParam(value = "page",required = false, defaultValue = "0") String page,
             @RequestParam(value = "size",required = false ,defaultValue = "2") String size,
             @RequestParam(value = "orderBy", required = false, defaultValue = "CreateDateTime") String orderBy,
-            @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction)
+            @RequestParam(value = "direction",required = false, defaultValue = "DESC") String direction
+        )
     {
+
 
         Page data =  postService.getAllPostsHome(page,size,orderBy,direction);
 /*        List<Category> categories = categoryService.getAllTags();
@@ -59,9 +62,8 @@ public class PostController {
         modelAndView.addObject("allCategories",categories);
         modelAndView.addObject("allUsers",users);*/
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
-        return modelAndView;
 
-//        return data.getContent();
+        return modelAndView;
     }
 
     @RequestMapping(value = "posts/{id}",method = RequestMethod.GET)
