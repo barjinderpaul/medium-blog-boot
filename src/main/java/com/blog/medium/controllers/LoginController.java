@@ -8,6 +8,7 @@ import com.blog.medium.repository.RoleRepository;
 import com.blog.medium.repository.UserRepository;
 import com.blog.medium.service.EmailSenderService;
 import com.blog.medium.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
+@Slf4j
 public class LoginController {
 
     @Autowired
@@ -48,6 +50,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public ModelAndView lig(){
+        log.info("Login started");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
         return modelAndView;
@@ -55,6 +58,7 @@ public class LoginController {
 
     @GetMapping("/register")
     public ModelAndView register(){
+        log.info("GET: /register");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("register");
         return modelAndView;
@@ -63,6 +67,7 @@ public class LoginController {
 
     @PostMapping("/register")
     public ModelAndView registerSuccessful(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email) {
+        log.info("POST: /register, Starting registration of user");
 
         userService.registerUer(username, password, email);
 
@@ -77,6 +82,7 @@ public class LoginController {
     @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
     {
+        log.info("GET: /confirm-account, confirming user account");
         return userService.confirmAccount(confirmationToken);
     }
 
@@ -97,6 +103,7 @@ public class LoginController {
 
     @GetMapping("/forgot-password")
     public ModelAndView forgotPassword(){
+        log.info("GET: /forgot-password, page for forget password");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("forgotPassword");
         return modelAndView;
@@ -104,12 +111,14 @@ public class LoginController {
 
     @PostMapping("/forgot-password")
     public ModelAndView resetPassword(@RequestParam("username") String username){
+        log.info("POST: /forgot-password, process for resetting password started");
         return userService.resetPassword(username);
     }
 
     @GetMapping("/forget-account-password")
     public ModelAndView setNewPassword(ModelAndView modelAndView, @RequestParam("token")String confirmationToken){
-       return userService.setNewPassword(confirmationToken);
+       log.info("GET: /forget-account-password");
+        return userService.setNewPassword(confirmationToken);
     }
 
     @PostMapping("/forget-account-password")
