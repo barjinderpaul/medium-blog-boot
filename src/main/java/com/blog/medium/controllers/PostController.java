@@ -1,5 +1,6 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
 import com.blog.medium.model.User;
@@ -78,7 +79,7 @@ public class PostController {
     }
 
 
-    @RequestMapping(value = {"/posts","/posts/","/posts?"} ,method = RequestMethod.GET)
+    @RequestMapping(value = {"/posts"} ,method = RequestMethod.GET)
     @ResponseBody
     public ModelAndView filterPostsByCreationDate(@RequestParam(value = "operation",required = false,defaultValue = "and") String operation,
                                                   @RequestParam(value = "user",required = false,defaultValue = "noUser") String username,
@@ -119,6 +120,13 @@ public class PostController {
 
     @RequestMapping(value = "posts/add",method = RequestMethod.POST)
     public ModelAndView addPost(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories" , required = false) String[] categories) {
+
+        if(title == null || title.equals("")){
+            throw new InvalidArgumentException("title cannot be null");
+        }
+        if(content == null || content.equals("")) {
+            throw new InvalidArgumentException("content cannot be null");
+        }
 
         List<String> categoriesList;
         if(categories != null) {
@@ -192,6 +200,13 @@ public class PostController {
 
     @RequestMapping(value = "posts/update/{id}",method = RequestMethod.POST)
     public String updatePost(@PathVariable("id") String id, @RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "categories", required = false) String[] categories) {
+
+        if(title == null || title.equals("")){
+            throw new InvalidArgumentException("title cannot be null");
+        }
+        if(content == null || content.equals("")) {
+            throw new InvalidArgumentException("content cannot be null");
+        }
 
         List<String> categoriesList;
         if(categories != null) {
