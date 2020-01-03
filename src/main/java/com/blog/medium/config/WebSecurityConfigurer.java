@@ -60,7 +60,11 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin();
+                .formLogin()
+                .and()
+                .logout().invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutSuccessUrl("/").permitAll();
 
 
 /*        http.authorizeRequests().antMatchers("/admin").hasRole("ADMIN")

@@ -7,6 +7,7 @@ import com.blog.medium.repository.ConfirmationTokenRepository;
 import com.blog.medium.repository.RoleRepository;
 import com.blog.medium.repository.UserRepository;
 import com.blog.medium.service.EmailSenderService;
+import com.blog.medium.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.SimpleMailMessage;
@@ -37,6 +38,9 @@ public class LoginController {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     private ConfirmationTokenRepository confirmationTokenRepository;
 
     @Autowired
@@ -56,55 +60,16 @@ public class LoginController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/username", method = RequestMethod.GET)
-    @ResponseBody
-    public String currentUserName(Authentication authentication) {
-        return authentication.getName();
-    }
 
     @PostMapping("/register")
     public ModelAndView registerSuccessful(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
 
-        Role userRole = roleRepository.findByRoleName("USER");
-        if(userRole == null) {
-            Role userR = new Role();
-            userR.setRoleName("USER");
-            roleRepository.save(userR);
-            userRole = userR;
-        }
-        Set<Role> userRoles = new HashSet<>();
-        userRoles.add(userRole);
-        user.setRoles(userRoles);
-        userRepository.save(user);
-
-
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
-        confirmationTokenRepository.save(confirmationToken);
-
-        System.out.println("HEREREREERE + " );
-
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Complete Registration!");
-        mailMessage.setFrom("ibennysingh@gmail.com");
-        mailMessage.setText("To confirm your account, please click here : "
-                +"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
-
-        emailSenderService.sendEmail(mailMessage);
+        userService.registerUer(username, password, email);
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("emailId", user.getEmail());
-
+        modelAndView.addObject("emailId", email);
         modelAndView.setViewName("successfulRegisteration");
 
-
-       /* ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("");*/
        return modelAndView;
 
     }
@@ -112,21 +77,7 @@ public class LoginController {
     @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
     {
-        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-        if(token != null)
-        {
-            User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
-            user.setIsEnabled(true);
-            userRepository.save(user);
-            modelAndView.setViewName("accountVerified");
-        }
-        else
-        {
-            modelAndView.addObject("message","The link is invalid or broken!");
-            modelAndView.setViewName("error");
-        }
-
-        return modelAndView;
+        return userService.confirmAccount(confirmationToken);
     }
 
 
@@ -153,48 +104,12 @@ public class LoginController {
 
     @PostMapping("/forgot-password")
     public ModelAndView resetPassword(@RequestParam("username") String username){
-        ModelAndView modelAndView = new ModelAndView();
-        User user = userRepository.findByUsername(username);
-        if(user==null){
-            modelAndView.addObject("message","The link is invalid or broken!");
-            modelAndView.setViewName("error");
-        }
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
-        confirmationTokenRepository.save(confirmationToken);
-
-        System.out.println("HEREREREERE + " );
-
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Forgot Password");
-        mailMessage.setFrom("ibennysingh@gmail.com");
-        mailMessage.setText("To reset your account password, please click here : "
-                +"https://cedium.herokuapp.com/forget-account-password?token="+confirmationToken.getConfirmationToken());
-
-        emailSenderService.sendEmail(mailMessage);
-
-        modelAndView.addObject("message", "Password reset link sent on " +user.getEmail() + " .");
-
-        modelAndView.setViewName("messagePage");
-        return modelAndView;
+        return userService.resetPassword(username);
     }
 
     @GetMapping("/forget-account-password")
     public ModelAndView setNewPassword(ModelAndView modelAndView, @RequestParam("token")String confirmationToken){
-        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-        if(token != null)
-        {
-            User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
-            modelAndView.addObject("username",user.getUsername());
-            modelAndView.setViewName("setNewPassword");
-        }
-        else
-        {
-            modelAndView.addObject("message","The link is invalid or broken!");
-            modelAndView.setViewName("error");
-        }
-
-        return modelAndView;
+       return userService.setNewPassword(confirmationToken);
     }
 
     @PostMapping("/forget-account-password")
@@ -213,4 +128,11 @@ public class LoginController {
         }
         return modelAndView;
     }
+
+    @RequestMapping(value = "/username", method = RequestMethod.GET)
+    @ResponseBody
+    public String currentUserName(Authentication authentication) {
+        return authentication.getName();
+    }
+
 }
