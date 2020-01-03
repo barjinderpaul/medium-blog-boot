@@ -42,7 +42,7 @@
             </p>
             <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
 
-            <c:set var = "currentUser" scope = "session" value = "<%= SecurityContextHolder.getContext().getAuthentication().getName() %>"/>
+            <c:set var = "currentUser" scope = "session" value = "<%= ;; %>"/>
             <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
 
             <c:if test = "${ (list.getUser().getUsername() == currentUser ) || currentUserRole == '[ROLE_ADMIN]'}">
