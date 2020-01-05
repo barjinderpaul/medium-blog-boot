@@ -43,7 +43,7 @@ public class ScheduledTasks {
     public void removeTokens(){
         List<ConfirmationToken> confirmationTokenList = confirmationTokenRepository.findAll();
         confirmationTokenList.forEach(token->{
-            if( new Date().getTime() - token.getCreatedDate().getTime() >= oneMinute ){
+            if( new Date().getTime() - token.getCreatedDate().getTime() >= tenMinutes ){
                 log.debug("Deleting token with id: " + token.getTokenid());
                 confirmationTokenRepository.deleteConfirmationTokenByTokenid(token.getTokenid());
             }

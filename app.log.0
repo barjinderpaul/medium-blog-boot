@@ -1,0 +1,20 @@
+[2020-01-04 11:21:27.783] - 7026 INFO [restartedMain] --- com.blog.medium.MediumApplication: Starting MediumApplication on ubuntu with PID 7026 (started by barjinder in /media/barjinder/New Volume/Study/MountBlue/Spring/Spring-boot-2)
+[2020-01-04 11:21:27.823] - 7026 FINE [restartedMain] --- com.blog.medium.MediumApplication: Running with Spring Boot v2.2.2.RELEASE, Spring v5.2.2.RELEASE
+[2020-01-04 11:21:27.826] - 7026 INFO [restartedMain] --- com.blog.medium.MediumApplication: No active profile set, falling back to default profiles: default
+[2020-01-04 11:21:29.966] - 7026 INFO [restartedMain] --- org.apache.catalina.core.StandardService: Starting service [Tomcat]
+[2020-01-04 11:21:29.970] - 7026 INFO [restartedMain] --- org.apache.catalina.core.StandardEngine: Starting Servlet engine: [Apache Tomcat/9.0.29]
+[2020-01-04 11:21:30.190] - 7026 INFO [restartedMain] --- org.apache.jasper.servlet.TldScanner: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+[2020-01-04 11:21:30.194] - 7026 INFO [restartedMain] --- org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]: Initializing Spring embedded WebApplicationContext
+[2020-01-04 11:21:30.372] - 7026 INFO [restartedMain] --- org.hibernate.jpa.internal.util.LogHelper: HHH000204: Processing PersistenceUnitInfo [name: default]
+[2020-01-04 11:21:30.436] - 7026 INFO [restartedMain] --- org.hibernate.Version: HHH000412: Hibernate Core {5.4.9.Final}
+[2020-01-04 11:21:30.552] - 7026 INFO [restartedMain] --- org.hibernate.annotations.common.Version: HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+[2020-01-04 11:21:30.668] - 7026 INFO [restartedMain] --- com.zaxxer.hikari.HikariDataSource: HikariPool-1 - Starting...
+[2020-01-04 11:21:31.203] - 7026 INFO [restartedMain] --- com.zaxxer.hikari.HikariDataSource: HikariPool-1 - Start completed.
+[2020-01-04 11:21:31.219] - 7026 INFO [restartedMain] --- org.hibernate.dialect.Dialect: HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL82Dialect
+[2020-01-04 11:21:32.629] - 7026 INFO [restartedMain] --- org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator: HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+[2020-01-04 11:21:33.578] - 7026 INFO [restartedMain] --- springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping: Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+[2020-01-04 11:21:34.056] - 7026 INFO [restartedMain] --- springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper: Context refreshed
+[2020-01-04 11:21:34.076] - 7026 INFO [restartedMain] --- springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper: Found 1 custom documentation plugin(s)
+[2020-01-04 11:21:34.119] - 7026 INFO [restartedMain] --- springfox.documentation.spring.web.scanners.ApiListingReferenceScanner: Scanning for api listing references
+[2020-01-04 11:21:34.389] - 7026 INFO [restartedMain] --- com.blog.medium.MediumApplication: Started MediumApplication in 6.997 seconds (JVM running for 7.621)
+[2020-01-04 11:21:44.516] - 7026 INFO [http-nio-5000-exec-1] --- org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]: Initializing Spring DispatcherServlet 'dispatcherServlet'
