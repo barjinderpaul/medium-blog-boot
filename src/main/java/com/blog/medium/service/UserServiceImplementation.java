@@ -135,7 +135,7 @@ public class UserServiceImplementation implements UserService {
         mailMessage.setSubject("Forgot Password");
         mailMessage.setFrom("ibennysingh@gmail.com");
         mailMessage.setText("To reset your account password, please click here : "
-                +"https://cedium.herokuapp.com/forget-account-password?token="+confirmationToken.getConfirmationToken());
+                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/blog/forget-account-password?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
 
@@ -164,6 +164,55 @@ public class UserServiceImplementation implements UserService {
 
         return modelAndView;
     }
+
+    @Override
+    public void registerAdmin(String username, String password, String email, String key) {
+        checkValidRegistration(username,password,email);
+        if( !(key.equals("PRIVATE_KEY")) ) {
+            throw new InvalidArgumentException("key is not valid");
+        }
+        User isAlreadyExistingUser = userRepository.findByUsername(username);
+
+        User user = null;
+        if(isAlreadyExistingUser == null) {
+            user = new User();
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(bCryptPasswordEncoder.encode(password));
+
+            Role adminRole = roleRepository.findByRoleName("ADMIN");
+            if (adminRole == null) {
+                Role userR = new Role();
+                userR.setRoleName("ADMIN");
+                roleRepository.save(userR);
+                adminRole = userR;
+            }
+            Set<Role> userRoles = new HashSet<>();
+            userRoles.add(adminRole);
+            user.setRoles(userRoles);
+            userRepository.save(user);
+        }
+        else { user = isAlreadyExistingUser; }
+
+        ConfirmationToken existingConfirmationToken = confirmationTokenRepository.findByUser_Username(user.getUsername());
+        if (existingConfirmationToken != null ){
+            confirmationTokenRepository.deleteConfirmationTokenByUser_Id(existingConfirmationToken.getUser().getId());
+        }
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+        confirmationTokenRepository.save(confirmationToken);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom("ibennysingh@gmail.com");
+        mailMessage.setText("To confirm your account, please click here : "
+                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/blog/confirm-account?token="+confirmationToken.getConfirmationToken());
+
+        emailSenderService.sendEmail(mailMessage);
+
+    }
+
 
     private void checkValidRegistration(String username, String password, String email) {
 

@@ -56,12 +56,34 @@ public class LoginController {
         return modelAndView;
     }
 
+    @GetMapping("/register/admin")
+    public ModelAndView registerAdmin(){
+        log.info("GET: /register/admin");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("adminRegister");
+        return modelAndView;
+    }
+
     @GetMapping("/register")
     public ModelAndView register(){
         log.info("GET: /register");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("register");
         return modelAndView;
+    }
+
+    @PostMapping("/register/admin")
+    public ModelAndView registerSuccessfulAdmin(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email, @RequestParam("key")String key) {
+        log.info("POST: /register, Starting registration of user");
+
+        userService.registerAdmin(username, password, email,key);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("emailId", email);
+        modelAndView.setViewName("successfulRegisteration");
+
+        return modelAndView;
+
     }
 
 

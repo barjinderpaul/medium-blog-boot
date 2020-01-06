@@ -4,7 +4,7 @@
 
 <div class = "container">
     <div class="wrapper">
-        <form action="/forgot-password" method="post" name="Login_Form" class="form-signin">
+        <form action="forgot-password" method="post" name="Login_Form" class="form-signin">
 
             <h3 class="form-signin-heading">Forgot Password? Please Enter your username</h3>
             <hr class="colorgraph"><br>

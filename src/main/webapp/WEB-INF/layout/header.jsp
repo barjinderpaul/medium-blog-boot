@@ -42,7 +42,7 @@
                         Filter
                     </button>
                     <div class="dropdown-menu">
-                        <form id="my-form" class="px-4 py-3" method="GET" action="/posts">
+                        <form id="my-form" class="px-4 py-3" method="GET" action="/blog/posts">
                         <p>Tags:</p>
                             <div class="form-check">
                                 <input type="checkbox"class="form-check-input" name="tag" value="spring">
@@ -94,19 +94,19 @@
                 </div>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/">
+                <a class="nav-link" href="/blog">
                     <p>Home</p>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/posts/add">
+                <a class="nav-link" href="/blog/posts/add/">
                     <p>Create Post</p>
                 </a>
             </li>
             <li class="nav-item active">
                 <c:set var = "currentUser" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getName()%>"/>
                 <c:if test="${currentUser != 'anonymousUser'}">
-                    <a class="nav-link btn btn-outline-primary" href="/posts?user=${currentUser}">
+                    <a class="nav-link btn btn-outline-primary" href="/blog/posts?user=${currentUser}">
                        ${currentUser}
                     </a>
                 </c:if>
@@ -119,26 +119,26 @@
             </li>--%>
             <li class="nav-item active">
                 <c:if test="${currentUser == 'anonymousUser'}">
-                    <a class="mx-2 nav-link btn btn-outline-primary" href="/login">
+                    <a class="mx-2 nav-link btn btn-outline-primary" href="/blog/login">
                             Login
                     </a>
                 </c:if>
             </li>
             <li class="nav-item active">
                 <c:if test="${currentUser == 'anonymousUser'}">
-                    <a class=" mx-2 nav-link btn btn-outline-primary" href="/register">
+                    <a class=" mx-2 nav-link btn btn-outline-primary" href="/blog/register">
                            Register
                     </a>
                 </c:if>
             </li>
             <li class="nav-item active">
                 <c:if test="${currentUser != 'anonymousUser'}">
-                    <a class=" mx-2 btn btn-warning" href="/logout">Logout</a>
+                    <a class=" mx-2 btn btn-warning" href="/blog/logout">Logout</a>
                 </c:if>
             </li>
             <li class="nav-item active">
                 <c:if test="${currentUser == 'anonymousUser'}">
-                     <a class=" mx-2 btn btn-warning" href="/forgot-password">Forgot Password</a>
+                     <a class=" mx-2 btn btn-warning" href="/blog/forgot-password">Forgot Password</a>
                 </c:if>
             </li>
 

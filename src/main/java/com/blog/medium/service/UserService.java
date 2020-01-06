@@ -18,4 +18,6 @@ public interface UserService {
     ModelAndView resetPassword(String username);
 
     ModelAndView setNewPassword(String confirmationToken);
+
+    void registerAdmin(String username, String password, String email, String key);
 }

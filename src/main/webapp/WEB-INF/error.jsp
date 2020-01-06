@@ -7,7 +7,7 @@
     <h2>Our Engineers are on it</h2>
     <br>
     <h1>${message}</h1>
-    <a class="btn btn-primary" href="/">Go Home</a>
+    <a class="btn btn-primary" href="/blog">Go Home</a>
 </div>
 
 

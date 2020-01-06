@@ -20,14 +20,14 @@
 
 <c:if test="${customAction == 'postCreated'}">
     <div class="alert alert-success" role="alert">
-        <p>Post created : ${title} &nbsp; <a class="btn btn-primary" href="/posts/${id}">Go to Post</a> </p>
+        <p>Post created : ${title} &nbsp; <a class="btn btn-primary" href="/blog/posts/${id}">Go to Post</a> </p>
     </div>
 </c:if>
 
 <form action= "
     <c:choose>
-        <c:when test="${customAction == 'addPost' || customAction == 'postCreated'}"> add </c:when>
-        <c:otherwise> /posts/update/${id} </c:otherwise>
+        <c:when test="${customAction == 'addPost' || customAction == 'postCreated'}"> /blog/posts/add </c:when>
+        <c:otherwise> /blog/posts/update/${id} </c:otherwise>
     </c:choose>"
     method="post">
 <div class="form-group">

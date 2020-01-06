@@ -7,7 +7,7 @@
 <%--        <c:if test="${category} != 'null'>
             <p>Category created :   <a href="/posts?tag=${category}">${category}</a></p>
         </c:if>--%>
-        <form action="/posts/category" method="post" name="Login_Form" class="form-signin">
+        <form action="posts/category" method="post" name="Login_Form" class="form-signin">
 
             <h3 class="form-signin-heading">Welcome! Please Sign In</h3>
             <hr class="colorgraph"><br>

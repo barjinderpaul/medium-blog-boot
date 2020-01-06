@@ -4,7 +4,7 @@
 
 <div class = "container">
     <div class="wrapper">
-        <form action="/login" method="post" name="Login_Form" class="form-signin">
+        <form action="login" method="post" name="Login_Form" class="form-signin">
 
             <h3 class="form-signin-heading">Welcome! Please Sign In</h3>
             <hr class="colorgraph"><br>

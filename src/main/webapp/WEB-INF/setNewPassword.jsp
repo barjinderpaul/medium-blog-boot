@@ -4,7 +4,7 @@
 
 <div class = "container">
     <div class="wrapper">
-        <form action="/forget-account-password" method="post" name="Password_Reset" class="form-signin">
+        <form action="forget-account-password" method="post" name="Password_Reset" class="form-signin">
 
             <h3 class="form-signin-heading">Welcome! Please, set your new password</h3>
             <hr class="colorgraph"><br>
