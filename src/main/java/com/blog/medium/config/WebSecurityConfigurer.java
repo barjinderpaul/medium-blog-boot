@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Qualifier("customUserDetailsService")
@@ -58,6 +57,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/register").permitAll()
                 .antMatchers(HttpMethod.GET,"/register/admin").permitAll()
                 .antMatchers(HttpMethod.POST,"/register/admin").permitAll()
+                .antMatchers("/errors").authenticated()
                 .antMatchers(HttpMethod.GET,"/posts/add").authenticated()
                 .antMatchers(HttpMethod.POST,"/posts/add").authenticated()
                 .antMatchers(HttpMethod.POST,"/blog/posts/add").authenticated()
@@ -74,20 +74,5 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .logout().invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .logoutSuccessUrl("/").permitAll();
-
-
-/*        http.authorizeRequests().antMatchers("/admin").hasRole("ADMIN")
-            .antMatchers("/author").hasRole("USER").antMatchers("/")
-            .permitAll().and().formLogin();*/
-
-     /*   http.authorizeRequests()
-        .antMatchers("/posts/**")
-        .authenticated().and()
-        .authorizeRequests()
-        .antMatchers("/api/**")
-        .authenticated().anyRequest().hasAnyRole("ADMIN");
-//        .formLogin().permitAll();*/
     }
-
-
 }

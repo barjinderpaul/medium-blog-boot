@@ -3,21 +3,16 @@ package com.blog.medium.controllers;
 import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.model.Category;
 import com.blog.medium.model.Post;
-import com.blog.medium.model.User;
 import com.blog.medium.repository.PostRepository;
-import com.blog.medium.repository.UserRepository;
-import com.blog.medium.service.CategoryService;
-import com.blog.medium.service.PostService;
-import com.blog.medium.service.UserService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.blog.medium.services.CategoryService;
+import com.blog.medium.services.PostService;
+import com.blog.medium.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +20,6 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 @Controller
-//@RestController
 public class PostController {
 
     @Autowired
@@ -51,16 +45,11 @@ public class PostController {
 
 
         Page data =  postService.getAllPostsHome(page,size,orderBy,direction);
-/*        List<Category> categories = categoryService.getAllTags();
-        List<User> users = userService.getAllUsers(page,size,orderBy,direction);*/
-
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("blogPosts");
         modelAndView.addObject("allPosts",data.getContent());
-        modelAndView.addObject("postsPage",data);/*
-        modelAndView.addObject("allCategories",categories);
-        modelAndView.addObject("allUsers",users);*/
+        modelAndView.addObject("postsPage",data);
         modelAndView.addObject("numbers", IntStream.range(0,data.getTotalPages()).toArray());
 
         return modelAndView;
@@ -94,10 +83,10 @@ public class PostController {
 
         Page<Post> data = null;
         if(searchQuery.equals("")){
-             data = postService.filterPostsMethodWithoutSearch(username, tagName, orderBy, direction,operation,page, size);
+             data = postService.filterPostsWithoutSearch(username, tagName, orderBy, direction,operation,page, size);
         }
         else {
-            data = postService.filterPostsMethodBySearch(username, tagName, orderBy, direction, operation, searchQuery, page, size);
+            data = postService.filterPostsBySearch(username, tagName, orderBy, direction, operation, searchQuery, page, size);
         }
 
         ModelAndView modelAndView = new ModelAndView();
@@ -239,5 +228,6 @@ public class PostController {
 
         return modelAndView;
     }
+
 
 }

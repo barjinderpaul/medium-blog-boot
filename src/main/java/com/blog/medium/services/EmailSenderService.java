@@ -1,4 +1,4 @@
-package com.blog.medium.service;
+package com.blog.medium.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

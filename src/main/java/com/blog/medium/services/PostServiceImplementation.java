@@ -1,4 +1,4 @@
-package com.blog.medium.service;
+package com.blog.medium.services;
 import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.Category;
@@ -11,7 +11,6 @@ import com.blog.medium.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +47,7 @@ public class PostServiceImplementation implements PostService {
     * Exception checks
     * */
 
-    private void checkValidId(String id){
+    private void isValidId(String id){
         Long post_id;
         try {
             post_id = Long.parseLong(id);
@@ -58,17 +57,19 @@ public class PostServiceImplementation implements PostService {
         }
     }
 
-    private void checkValidCategory(Category category) {
+    private void isValidCategory(Category category) {
         if(category == null){
             throw new NotFoundException("Please, enter a valid category. No category: " + category + " exists");
         }
     }
 
-    private void checkNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
+    private void isNotNullAndValidArguments(String username, String category, String orderBy, String direction, String operation, String page, String size){
 
-        if( !(username.toLowerCase().equals("nouser")) && (userRepository.findByUsername(username) == null) ){
+        /* is valid user */
+        if( !(username.toLowerCase().equals("nouser")) && (userRepository.findByUsername(username.toLowerCase()) == null)){
             throw new NotFoundException("User: '" + username + "' does not exist");
         }
+        /* is valid category (more than 1 categories) */
         else if(category.contains(",")){
             String[] categories = category.split(",");
             for(String categoryName: categories){
@@ -81,6 +82,7 @@ public class PostServiceImplementation implements PostService {
                 }
             }
         }
+        /* is valid category (single category) */
         else if(!(category.equals("noTag"))){
             if(category == null) {
                 throw new InvalidArgumentException("No category: " + category +" exists");
@@ -92,16 +94,23 @@ public class PostServiceImplementation implements PostService {
                 }
             }
         }
-
-        if(Integer.parseInt(size) > 25){
-            throw new NotFoundException("Posts fetch size should be less than 25");
+        /* is valid page size (minimum posts) */
+        if(Integer.parseInt(size)<1){
+            throw new InvalidArgumentException("Posts fetch size cannot be less than 1");
         }
+        /* is valid page size (maximum posts) */
+        if(Integer.parseInt(size) > 25){
+            throw new InvalidArgumentException("Posts fetch size should be less than 25");
+        }
+        /* is valid sort direction */
         if(( !(direction.equals("ASC")) && (!(direction.equals("DESC"))) )) {
             throw new InvalidArgumentException("Direction/Sort By: " + direction + " is not valid");
         }
+        /* is valid orderBy */
         if((!(orderBy.equals("CreateDateTime")) && !(orderBy.equals("UpdateDateTime")))){
             throw new InvalidArgumentException("Order By: " + orderBy + " is not valid");
         }
+        /* is valid operation */
         if((!(operation.equals("and")) && !(operation.equals("or")))){
             throw new InvalidArgumentException("operation: " + operation + " not valid");
         }
@@ -109,11 +118,12 @@ public class PostServiceImplementation implements PostService {
     }
 
 
-    /* CRUD Operations */
+    /*
+    * CRUD Operations
+    */
 
     public Post getPost(String id) {
-
-        checkValidId(id);
+        isValidId(id);
         Long postId = Long.parseLong(id);
 
         Optional<Post> post = postRepository.findById(postId);
@@ -124,11 +134,6 @@ public class PostServiceImplementation implements PostService {
     }
 
     public Long addPost(String title, String content, List<String> categories) {
-    /*
-    No user exists:
-    User user = new User(); user.setEmail("admin@admin.com");user.setUsername("admin");user.setPassword("admin");
-    */
-
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUsername = null;
@@ -136,23 +141,17 @@ public class PostServiceImplementation implements PostService {
             currentUsername = userRepository.findByUsername(username);
         }
         Optional<User> userOptional = userRepository.findById(1L);
-/*
-        if(!(userOptional.isPresent())){
-            throw new NotFoundException("User with id = " + id + " not found");
-        }
-*/
-        User user = currentUsername;
+
+       User user = currentUsername;
         Post post = new Post();
         post.setPublishedAt(LocalDateTime.now());
         post.setTitle(title);
         post.setContent(content);
         post.setUser(user);
 
-        System.out.println("Categories = " + categories.toString());
-
         for (String category : categories) {
             Category categoryFound = categoryRepository.findByCategoryName(category);
-            checkValidCategory(categoryFound);
+            isValidCategory(categoryFound);
             categoryFound.getPosts().add(post);
             post.getCategories().add(categoryFound);
         }
@@ -164,7 +163,6 @@ public class PostServiceImplementation implements PostService {
     }
 
     public void deletePost(Long id) {
-
         Optional<Post> optionalPost = postRepository.findById(id);
 
         if(!(optionalPost.isPresent() ) ){
@@ -174,7 +172,7 @@ public class PostServiceImplementation implements PostService {
     }
 
     public Long updatePost(String id, String title, String content, List<String> categoriesList) {
-        checkValidId(id);
+        isValidId(id);
         Long postId = Long.parseLong(id);
 
         Optional<Post> optionalPost = postRepository.findById(postId);
@@ -187,7 +185,7 @@ public class PostServiceImplementation implements PostService {
 
         for (String categoryName : categoriesList) {
             Category category = categoryRepository.findByCategoryName(categoryName);
-            checkValidCategory(category);
+            isValidCategory(category);
             if (!(postFromDB.getCategories().contains(category))) {
                 postFromDB.getCategories().add(category);
                 category.getPosts().add(postFromDB);
@@ -205,10 +203,9 @@ public class PostServiceImplementation implements PostService {
         return post_id;
     }
 
-    @Override
     public Long updatePostPatch(String id, String title, String content, String[] categories) {
 
-        checkValidId(id);
+        isValidId(id);
         Long postId = Long.parseLong(id);
 
         Optional postOptional = postRepository.findById(postId);
@@ -228,7 +225,7 @@ public class PostServiceImplementation implements PostService {
         if(categories!= null && categories.length > 0) {
             for (String categoryName : categories) {
                 Category category = categoryRepository.findByCategoryName(categoryName);
-                checkValidCategory(category);
+                isValidCategory(category);
                 if (!(categoriesPresent.contains(category))) {
                     categoriesPresent.add(category);
                     category.getPosts().add(post);
@@ -239,10 +236,11 @@ public class PostServiceImplementation implements PostService {
         return post_id;
     }
 
-    /* Filter operations */
+    /*
+    * Filter operations
+    */
 
     private Pageable getPageable(String orderBy, String direction, Integer pageNo, Integer pageSize) {
-        System.out.println("orderBy , direction, pageNo, pageSize = " + orderBy + " " + direction + " " + pageNo + " " + pageSize);
         Sort sort = null;
         if (direction.equals("ASC")) {
             sort = Sort.by(orderBy).ascending();
@@ -271,21 +269,20 @@ public class PostServiceImplementation implements PostService {
         List<Category> categoryList = new ArrayList<>();
         for (String categoryName : categories) {
             Category category = categoryRepository.findByCategoryName(categoryName);
-            checkValidCategory(category);
+            isValidCategory(category);
             categoryList.add(category);
         }
 
         List<Post> allPostsWithAllCategories = new ArrayList<>();
         for (Post post : allPosts) {
             if (post.getCategories().containsAll(categoryList) && post.getUser().getUsername().toLowerCase().equals(username) && (post.getTitle().contains(searchQuery) || post.getContent().contains(searchQuery))) {
-                System.out.println("MATCH FOUND");
                 allPostsWithAllCategories.add(post);
             }
         }
         return getCustomPage(pageNo, pageSize, allPostsWithAllCategories);
     }
 
-    private Page getPostshWithSearchAndUserAndCategory(String username, String categoryName, String searchQuery, Pageable pageable) {
+    private Page getPostsWithSearchAndUserAndCategory(String username, String categoryName, String searchQuery, Pageable pageable) {
         return postRepository.findDistinctByUser_usernameAndCategories_categoryNameAndTitleContainingOrUser_usernameAndCategories_categoryNameAndContentContainingOrUser_usernameAndCategories_categoryNameAndCategories_categoryName(username, categoryName, searchQuery, username, categoryName, searchQuery, username, categoryName, searchQuery, pageable);
     }
 
@@ -305,23 +302,22 @@ public class PostServiceImplementation implements PostService {
         return postRepository.findDistinctByTitleContainsOrContentContainsOrCategories_categoryNameLike(searchQuery, searchQuery, searchQuery, pageable);
     }
 
-    public Page<Post> filterPostsMethodBySearch(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size) {
+    public Page<Post> filterPostsBySearch(String username, String tagName, String orderBy, String direction, String operation, String searchQuery, String page, String size) {
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
-        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
+        isNotNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
 
         if(searchQuery==null){
             throw new NotFoundException("Search query should not be null");
         }
-//        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
 
         Page data = null;
         if (tagName.contains(",") && !(username.toLowerCase().equals("nouser"))) {
             data = getPostsByUsernameAndSearchAndMultipleCategoriesAndOperation(username, tagName, searchQuery, orderBy, direction, pageNo, pageSize);
         } else if ((!(username.toLowerCase().equals("nouser"))) && tagName != null && !(tagName.toLowerCase().equals("notag"))) {
-            data = getPostshWithSearchAndUserAndCategory(username, tagName, searchQuery, pageable);
+            data = getPostsWithSearchAndUserAndCategory(username, tagName, searchQuery, pageable);
         } else if ((!(username.toLowerCase().equals("nouser")))) {
             data = getPostsWithSearchAndUsername(username, searchQuery, pageable);
         } else if (tagName.contains(",")) {
@@ -410,10 +406,10 @@ public class PostServiceImplementation implements PostService {
         return postRepository.findAllByOrderByIdAsc(pageable);
     }
 
-    public Page<Post> filterPostsMethodWithoutSearch(String username, String tagName, String orderBy, String direction, String operation, String page, String size) {
+    public Page<Post> filterPostsWithoutSearch(String username, String tagName, String orderBy, String direction, String operation, String page, String size) {
         Integer pageNo = Integer.parseInt(page);
         Integer pageSize = Integer.parseInt(size);
-        checkNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
+        isNotNullAndValidArguments(username, tagName, orderBy, direction, operation, page, size);
         Pageable pageable = getPageable(orderBy, direction, pageNo, pageSize);
         String[] categories = tagName.split(",");
 

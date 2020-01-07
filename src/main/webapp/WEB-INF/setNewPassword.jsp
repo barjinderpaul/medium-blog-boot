@@ -9,7 +9,7 @@
             <h3 class="form-signin-heading">Welcome! Please, set your new password</h3>
             <hr class="colorgraph"><br>
 
-            <input type="text" class="form-control" name="username" placeholder="Username" required="" value="${username}" autofocus="" />
+            <input type="text" class="form-control" name="username" placeholder="Username" readonly required="" value="${username}" autofocus="" />
             <br>
             <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
             <br>

@@ -1,8 +1,7 @@
-package com.blog.medium.service;
+package com.blog.medium.services;
 
 import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.model.ConfirmationToken;
-import com.blog.medium.model.Post;
 import com.blog.medium.model.Role;
 import com.blog.medium.model.User;
 import com.blog.medium.repository.ConfirmationTokenRepository;
@@ -36,23 +35,6 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).get();
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
-    }
-
-    @Override
-    public User save(User user) {
-
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 
     @Override
     @Transactional
@@ -215,7 +197,6 @@ public class UserServiceImplementation implements UserService {
 
 
     private void checkValidRegistration(String username, String password, String email) {
-
         if(username==null || username.equals("") ){
             throw new InvalidArgumentException("Username: " + username + " is invalid");
         }
