@@ -1,6 +1,7 @@
 package com.blog.medium.scheduling;
 
 import com.blog.medium.model.ConfirmationToken;
+import com.blog.medium.model.User;
 import com.blog.medium.repository.ConfirmationTokenRepository;
 import com.blog.medium.repository.PostRepository;
 import com.blog.medium.repository.UserRepository;
@@ -38,14 +39,16 @@ public class ScheduledTasks {
     private static final Integer tenMinutes = 600000;
     private static final Integer oneMinute = 1000*60;
 
-    @Scheduled(fixedRate = 1000*10)
+    @Scheduled(fixedRate = 1000*30)
     @Transactional
     public void removeTokens(){
         List<ConfirmationToken> confirmationTokenList = confirmationTokenRepository.findAll();
         confirmationTokenList.forEach(token->{
             if( new Date().getTime() - token.getCreatedDate().getTime() >= tenMinutes ){
                 log.debug("Deleting token with id: " + token.getTokenid());
+                User user = token.getUser();
                 confirmationTokenRepository.deleteConfirmationTokenByTokenid(token.getTokenid());
+                userRepository.deleteUserByUsername(user.getUsername());
             }
         });
     }
