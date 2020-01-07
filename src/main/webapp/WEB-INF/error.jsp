@@ -14,7 +14,7 @@
     <h3>Something went wrong! </h3>
     <br>
     <h5>${message}</h5>
-    <a class="btn btn-primary" href="/blog">Go Home</a>
+    <a class="btn btn-primary" href="/">Go Home</a>
 </div>
 
 

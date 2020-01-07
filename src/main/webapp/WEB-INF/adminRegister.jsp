@@ -11,7 +11,7 @@
 
 <div class = "container">
     <div class="wrapper">
-        <form action="/blog/register/admin" method="post" name="Register-form" class="form-signin">
+        <form action="/register/admin" method="post" name="Register-form" class="form-signin">
 
             <h3 class="form-signin-heading">Register yourself</h3>
             <hr class="colorgraph"><br>

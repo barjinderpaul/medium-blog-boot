@@ -17,7 +17,7 @@
                 <h3 class="form-signin-heading">Register yourself</h3>
                 <span class="float-right">
                     Register as Admin?
-                    <a class="btn btn-outline-primary" href="/blog/register/admin">Admin</a>
+                    <a class="btn btn-outline-primary" href="/register/admin">Admin</a>
                 </span>
 
             </p>

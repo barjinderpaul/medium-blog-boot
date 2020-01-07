@@ -8,7 +8,7 @@
     <br>
     <h4 class="text-danger">${errorMessage}</h4>
     <br>
-    <a class="btn btn-primary" href="/blog">Go Home</a>
+    <a class="btn btn-primary" href="/">Go Home</a>
 </div>
 
 

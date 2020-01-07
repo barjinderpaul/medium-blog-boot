@@ -98,7 +98,12 @@ public class PostController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "posts/add",method = RequestMethod.GET)
+/*    @GetMapping("/posts/add")
+    public ModelAndView redirectToAddPostGet(){
+        return new ModelAndView("redirect:/posts/add/");
+    }*/
+
+    @RequestMapping(value = "posts/add/",method = RequestMethod.GET)
     public ModelAndView redirectToCreatePost(){
         ModelAndView modelAndView = new ModelAndView();
 

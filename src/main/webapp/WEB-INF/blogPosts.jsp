@@ -44,23 +44,23 @@
                 <p class="font-weight-bold">Categories :
 
                     <c:forEach items="${categories}" var="category">
-                        <span> <a href="/blog/posts?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
+                        <span> <a href="/posts?tag=${category.categoryName}" class="btn btn-outline-primary">${category.categoryName}</a> </span>
                     </c:forEach>
                     <c:if test="${fn:length(categories) lt 1}">
                         <span>No categories found</span>
                     </c:if>
 
                 </p>
-                <a href="/blog/posts/${list.id}" class="btn btn-primary">Read More</a>
+                <a href="/posts/${list.id}" class="btn btn-primary">Read More</a>
                 <c:set var = "currentUser" scope = "session" value = "<%= SecurityContextHolder.getContext().getAuthentication().getName() %>"/>
                 <c:set var = "currentUserRole" scope="session" value="<%= SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString()%>"/>
 
                 <c:if test = "${ (list.getUser().getUsername() == currentUser ) || currentUserRole == '[ROLE_ADMIN]'}">
-                    <a href="/blog/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
+                    <a href="/posts/update/${list.id}" class="btn btn-warning">Edit Post</a>
                 </c:if>
 
                 <c:if test = "${(list.getUser().getUsername() == currentUser)  || currentUserRole == '[ROLE_ADMIN]'}">
-                    <a href="/blog/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
+                    <a href="/posts/delete/${list.id}" class="btn btn-danger">Delete Post</a>
                 </c:if>
 
 
@@ -86,7 +86,7 @@
                 }
                 pageContext.setAttribute("newQuery", newQuery);
             %>
-            <a class="btn btn-outline-dark" href="/blog/?${newQuery}">${pageNumber + 1} </a>
+            <a class="btn btn-outline-dark" href="/?${newQuery}">${pageNumber + 1} </a>
         </c:forEach>
     </ul>
 
