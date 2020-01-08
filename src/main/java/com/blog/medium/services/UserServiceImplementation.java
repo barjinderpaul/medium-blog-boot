@@ -111,11 +111,12 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public ModelAndView resetPassword(String username) {
+    public String resetPassword(String username) {
         User user = userRepository.findByUsername(username);
-        ModelAndView modelAndView = new ModelAndView();
-        if(user==null){
-            throw new InvalidArgumentException("Username: " + username + " does not exists.");
+        String message = "";
+//        ModelAndView modelAndView = new ModelAndView();
+        if(user == null){
+            return "Username does not exists";
         }
 
         ConfirmationToken confirmationToken = new ConfirmationToken(user);
@@ -130,11 +131,10 @@ public class UserServiceImplementation implements UserService {
 
         emailSenderService.sendEmail(mailMessage);
 
-        modelAndView.addObject("message", "Password reset link sent on " +user.getEmail() + " .");
+//        modelAndView.addObject("message", "Password reset link sent on " +user.getEmail() + " .");
+        message = "Password reset link sent on : " + user.getEmail() + "";
 
-        modelAndView.setViewName("messagePage");
-
-        return modelAndView;
+        return message;
     }
 
     @Override

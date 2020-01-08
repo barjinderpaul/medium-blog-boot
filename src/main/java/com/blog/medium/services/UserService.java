@@ -11,7 +11,7 @@ public interface UserService {
 
     ModelAndView confirmAccount(String confirmationToken);
 
-    ModelAndView resetPassword(String username);
+    String resetPassword(String username);
 
     ModelAndView setNewPassword(String confirmationToken);
 

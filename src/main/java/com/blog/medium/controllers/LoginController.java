@@ -104,7 +104,11 @@ public class LoginController {
     @PostMapping("/forgot-password")
     public ModelAndView resetPassword(@RequestParam("username") String username){
         log.info("POST: /forgot-password, process for resetting password started");
-        return userService.resetPassword(username);
+        String message =  userService.resetPassword(username);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message",message);
+        modelAndView.setViewName("forgotPassword");
+        return modelAndView;
     }
 
     @GetMapping("/forget-account-password")
