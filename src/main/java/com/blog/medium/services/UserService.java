@@ -9,7 +9,7 @@ public interface UserService {
 
     void registerUer(String username, String password, String email);
 
-    ModelAndView confirmAccount(String confirmationToken);
+    String confirmAccount(String confirmationToken);
 
     String resetPassword(String username);
 

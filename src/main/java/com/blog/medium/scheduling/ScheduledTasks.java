@@ -48,7 +48,9 @@ public class ScheduledTasks {
                 log.debug("Deleting token with id: " + token.getTokenid());
                 User user = token.getUser();
                 confirmationTokenRepository.deleteConfirmationTokenByTokenid(token.getTokenid());
-                userRepository.deleteUserByUsername(user.getUsername());
+                if(!user.getIsEnabled()) {
+                    userRepository.deleteUserByUsername(user.getUsername());
+                }
             }
         });
     }

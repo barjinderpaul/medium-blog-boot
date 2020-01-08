@@ -94,20 +94,18 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public ModelAndView confirmAccount(String confirmationToken) {
+    public String confirmAccount(String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
         ModelAndView modelAndView = new ModelAndView();
         if(token != null) {
             User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
             user.setIsEnabled(true);
             userRepository.save(user);
-            modelAndView.setViewName("accountVerified");
+            modelAndView.addObject("message","Account verified, please login");
+            return "Account verified, please login!";
         }
-        else {
-            modelAndView.addObject("message","The link is invalid or the token has expired!");
-            modelAndView.setViewName("error");
-        }
-        return modelAndView;
+            return "The link is invalid or the token has expired!";
+
     }
 
     @Override

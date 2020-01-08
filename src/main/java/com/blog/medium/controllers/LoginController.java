@@ -83,8 +83,8 @@ public class LoginController {
         userService.registerUer(username, password, email);
 
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("emailId", email);
-        modelAndView.setViewName("successfulRegisteration");
+        modelAndView.addObject("message", "Confirmation mail sent on : " + email + ", please confirm your account and login");
+        modelAndView.setViewName("login");
 
        return modelAndView;
 
@@ -94,7 +94,18 @@ public class LoginController {
     public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
     {
         log.info("GET: /confirm-account, confirming user account");
-        return userService.confirmAccount(confirmationToken);
+        ModelAndView modelAndView1 = new ModelAndView();
+
+        String message  = userService.confirmAccount(confirmationToken);
+        modelAndView.addObject("message",message);
+
+        if(message.contains("invalid")){
+            modelAndView.setViewName("error");
+        }
+        else {
+            modelAndView.setViewName("login");
+        }
+        return modelAndView;
     }
 
     @GetMapping("/forgot-password")
