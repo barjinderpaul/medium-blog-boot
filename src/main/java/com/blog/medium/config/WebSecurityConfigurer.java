@@ -64,6 +64,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE,"/posts/").authenticated()
                 .and()
                 .formLogin()
+                .loginPage("/login")
                 .and()
                 .logout().invalidateHttpSession(true)
                 .clearAuthentication(true)

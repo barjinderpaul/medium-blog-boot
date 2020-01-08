@@ -3,23 +3,25 @@
     <jsp:param name="title" value="Register"/>
 </jsp:include>
 
-<%
-    if(session.getAttribute("Username") != null ) {
-        response.sendRedirect("admin");
+<style>
+    .form-signin {
+        max-width: 720px;
+        padding: 30px 38px 66px;
+        margin: 0 auto;
+        background-color: #eee;
+        border: 3px dotted rgba(0,0,0,0.1);
     }
-%>
-
+</style>
+<br>
 <div class = "container">
     <div class="wrapper">
         <form action="register" method="post" name="Register-form" class="form-signin">
-
             <p>
-                <h3 class="form-signin-heading">Register yourself</h3>
-                <span class="float-right">
-                    Register as Admin?
-                    <a class="btn btn-outline-primary" href="/register/admin">Admin</a>
-                </span>
-
+                <h3>Register yourself
+                    <span class="float-right">
+                        <h5>Register as Admin? <span><a class="btn btn-outline-primary" href="/register/admin">Admin</a></span></h5>
+                    </span>
+                </h3>
             </p>
             <hr class="colorgraph"><br>
 
