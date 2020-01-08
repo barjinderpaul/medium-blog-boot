@@ -2,12 +2,16 @@
 <jsp:include page="layout/header.jsp" >
     <jsp:param name="title" value="Register"/>
 </jsp:include>
-
-<%
-    if(session.getAttribute("Username") != null ) {
-        response.sendRedirect("admin");
+<br>
+<style>
+    .form-signin {
+        max-width: 420px;
+        padding: 30px 38px 66px;
+        margin: 0 auto;
+        background-color: #eee;
+        border: 3px dotted rgba(0,0,0,0.1);
     }
-%>
+</style>
 
 <div class = "container">
     <div class="wrapper">

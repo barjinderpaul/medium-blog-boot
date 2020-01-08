@@ -13,7 +13,7 @@ public interface UserService {
 
     String resetPassword(String username);
 
-    ModelAndView setNewPassword(String confirmationToken);
+    String isValidToken(String confirmationToken);
 
     void registerAdmin(String username, String password, String email, String key);
 

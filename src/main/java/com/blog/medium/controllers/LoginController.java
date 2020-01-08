@@ -1,5 +1,6 @@
 package com.blog.medium.controllers;
 
+import com.blog.medium.exceptions.InvalidArgumentException;
 import com.blog.medium.model.User;
 import com.blog.medium.repository.RoleRepository;
 import com.blog.medium.repository.UserRepository;
@@ -112,23 +113,41 @@ public class LoginController {
     }
 
     @GetMapping("/forget-account-password")
-    public ModelAndView setNewPassword(ModelAndView modelAndView, @RequestParam("token")String confirmationToken){
+    public ModelAndView redirectToSetPassword(@RequestParam("token")String confirmationToken){
        log.info("GET: /forget-account-password");
-        return userService.setNewPassword(confirmationToken);
+        ModelAndView modelAndView = new ModelAndView();
+
+        String errorMessageOrUsername =  userService.isValidToken(confirmationToken);
+        if(errorMessageOrUsername.contains("invalid")){
+            modelAndView.addObject("message","The link is invalid or the token has expired!");
+            modelAndView.setViewName("error");
+            return modelAndView;
+        }
+
+        String username = errorMessageOrUsername;
+        modelAndView.addObject("username",username);
+        modelAndView.addObject("confirmUsername",username);
+        modelAndView.setViewName("setNewPassword");
+
+        return modelAndView;
     }
 
     @PostMapping("/forget-account-password")
-    public ModelAndView setPassword(@RequestParam("username")String username, @RequestParam("password") String password){
+    public ModelAndView setPassword(@RequestParam("username")String username, @RequestParam("confirmUsername")String confirmUsername,@RequestParam("password") String password){
+
         User user = userRepository.findByUsername(username);
         ModelAndView modelAndView = new ModelAndView();
         if(user == null ){
             modelAndView.addObject("message","Invalid User!");
             modelAndView.setViewName("error");
         }
+        else if( !(username.equals(confirmUsername))){
+            throw new InvalidArgumentException("Confirmation token is not valid for username : " + username);
+        }
         else{
             user.setPassword(bCryptPasswordEncoder.encode(password));
-            userRepository.save(user);
-            modelAndView.setViewName("messagePage");
+            Long userId = userRepository.save(user).getId();
+            modelAndView.setViewName("login");
             modelAndView.addObject("message","Password changed successfully");
         }
         return modelAndView;

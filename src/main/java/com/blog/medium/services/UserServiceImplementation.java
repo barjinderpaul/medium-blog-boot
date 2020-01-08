@@ -111,12 +111,18 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
+    @Transactional
     public String resetPassword(String username) {
         User user = userRepository.findByUsername(username);
         String message = "";
 //        ModelAndView modelAndView = new ModelAndView();
         if(user == null){
             return "Username does not exists";
+        }
+
+        ConfirmationToken isExistingConfirmationToken = confirmationTokenRepository.findByUser_Username(user.getUsername());
+        if(isExistingConfirmationToken != null) {
+            confirmationTokenRepository.deleteConfirmationTokenByTokenid(isExistingConfirmationToken.getTokenid());
         }
 
         ConfirmationToken confirmationToken = new ConfirmationToken(user);
@@ -138,22 +144,13 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public ModelAndView setNewPassword(String confirmationToken) {
+    public String isValidToken(String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-        ModelAndView modelAndView = new ModelAndView();
-        if(token != null)
-        {
+        if(token != null) {
             User user = userRepository.findByEmailIgnoreCase(token.getUser().getEmail());
-            modelAndView.addObject("username",user.getUsername());
-            modelAndView.setViewName("setNewPassword");
+            return user.getUsername();
         }
-        else
-        {
-            modelAndView.addObject("message","The link is invalid or the token has expired!");
-            modelAndView.setViewName("error");
-        }
-
-        return modelAndView;
+        return "The link is invalid or the token has expired!";
     }
 
     @Override
