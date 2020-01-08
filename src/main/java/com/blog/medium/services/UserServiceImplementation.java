@@ -87,7 +87,7 @@ public class UserServiceImplementation implements UserService {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setFrom("ibennysingh@gmail.com");
         mailMessage.setText("To confirm your account, please click here : "
-                +"https://cedium.herokuapp.com/confirm-account?token="+confirmationToken.getConfirmationToken());
+                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
 
@@ -133,7 +133,7 @@ public class UserServiceImplementation implements UserService {
         mailMessage.setSubject("Forgot Password");
         mailMessage.setFrom("ibennysingh@gmail.com");
         mailMessage.setText("To reset your account password, please click here : "
-                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/blog/forget-account-password?token="+confirmationToken.getConfirmationToken());
+                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/forget-account-password?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
 
@@ -195,7 +195,7 @@ public class UserServiceImplementation implements UserService {
         mailMessage.setSubject("Complete Registration!");
         mailMessage.setFrom("ibennysingh@gmail.com");
         mailMessage.setText("To confirm your account, please click here : "
-                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/blog/confirm-account?token="+confirmationToken.getConfirmationToken());
+                +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
         return "valid";
