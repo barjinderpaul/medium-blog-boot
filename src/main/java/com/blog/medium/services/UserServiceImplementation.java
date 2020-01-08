@@ -154,10 +154,10 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void registerAdmin(String username, String password, String email, String key) {
+    public String registerAdmin(String username, String password, String email, String key) {
         checkValidRegistration(username,password,email);
         if( !(key.equals("PRIVATE_KEY")) ) {
-            throw new InvalidArgumentException("key is not valid");
+            return "key is not valid";
         }
         User isAlreadyExistingUser = userRepository.findByUsername(username);
 
@@ -198,7 +198,7 @@ public class UserServiceImplementation implements UserService {
                 +"http://ec2-13-233-120-185.ap-south-1.compute.amazonaws.com:8080/blog/confirm-account?token="+confirmationToken.getConfirmationToken());
 
         emailSenderService.sendEmail(mailMessage);
-
+        return "valid";
     }
 
 

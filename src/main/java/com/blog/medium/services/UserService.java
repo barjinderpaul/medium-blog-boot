@@ -15,7 +15,7 @@ public interface UserService {
 
     String isValidToken(String confirmationToken);
 
-    void registerAdmin(String username, String password, String email, String key);
+    String registerAdmin(String username, String password, String email, String key);
 
     String getErrorOrLogoutMessage(String error, String message);
 }

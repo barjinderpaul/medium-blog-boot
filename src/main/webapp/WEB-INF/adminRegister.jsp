@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="layout/header.jsp" >
     <jsp:param name="title" value="Register"/>
@@ -16,7 +17,9 @@
 <div class = "container">
     <div class="wrapper">
         <form action="/register/admin" method="post" name="Register-form" class="form-signin">
-
+            <c:if test="${not empty message}">
+                <p class="text-danger text-center font-weight-bold">${message}</p>
+            </c:if>
             <h3 class="form-signin-heading">Register yourself</h3>
             <hr class="colorgraph"><br>
 

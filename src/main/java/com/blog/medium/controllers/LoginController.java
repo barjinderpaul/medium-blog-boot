@@ -61,15 +61,18 @@ public class LoginController {
     @PostMapping("/register/admin")
     public ModelAndView registerSuccessfulAdmin(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("email") String email, @RequestParam("key")String key) {
         log.info("POST: /register, Starting registration of user");
-
-        userService.registerAdmin(username, password, email,key);
-
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("emailId", email);
-        modelAndView.setViewName("successfulRegisteration");
 
+        String message = userService.registerAdmin(username, password, email,key);
+        if(message.equals("valid")) {
+            modelAndView.addObject("emailId", email);
+            modelAndView.setViewName("successfulRegisteration");
+            return modelAndView;
+        }
+
+        modelAndView.addObject("message",message);
+        modelAndView.setViewName("adminRegister");
         return modelAndView;
-
     }
 
 
