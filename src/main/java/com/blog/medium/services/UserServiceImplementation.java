@@ -1,6 +1,7 @@
 package com.blog.medium.services;
 
 import com.blog.medium.exceptions.InvalidArgumentException;
+import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.ConfirmationToken;
 import com.blog.medium.model.Role;
 import com.blog.medium.model.User;
@@ -35,6 +36,14 @@ public class UserServiceImplementation implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Override
+    public String getErrorOrLogoutMessage(String error, String message) {
+        if (error != null) {
+            return "Invalid login/password";
+        }
+        return "Logout success!";
+    }
 
     @Override
     @Transactional
@@ -194,6 +203,8 @@ public class UserServiceImplementation implements UserService {
         emailSenderService.sendEmail(mailMessage);
 
     }
+
+
 
 
     private void checkValidRegistration(String username, String password, String email) {

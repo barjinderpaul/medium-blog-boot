@@ -29,9 +29,14 @@ public class LoginController {
     UserService userService;
 
     @GetMapping("/login")
-    public ModelAndView lig(){
+    public ModelAndView getLoginPage(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout",required = false) String logout){
         log.info("Login started");
+        String message = null;
+        if (error != null || logout != null) {
+            message = userService.getErrorOrLogoutMessage(error,logout);
+        }
         ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("message",message);
         modelAndView.setViewName("login");
         return modelAndView;
     }
