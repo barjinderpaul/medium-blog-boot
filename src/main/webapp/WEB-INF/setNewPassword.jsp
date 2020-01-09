@@ -24,7 +24,7 @@
             <input type="text" class="form-control" name="confirmationToken" hidden readonly value="${confirmationToken}">
             <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
             <br>
-            <button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Login</button>
+            <button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Login" type="Submit">Submit</button>
         </form>
     </div>
 </div>

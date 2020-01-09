@@ -136,12 +136,6 @@
                     <a class=" mx-2 btn btn-warning" href="/logout">Logout</a>
                 </c:if>
             </li>
-            <li class="nav-item active">
-                <c:if test="${currentUser == 'anonymousUser'}">
-                     <a class=" mx-2 btn btn-warning" href="/forgot-password">Forgot Password</a>
-                </c:if>
-            </li>
-
         </ul>
     </div>
 </nav>

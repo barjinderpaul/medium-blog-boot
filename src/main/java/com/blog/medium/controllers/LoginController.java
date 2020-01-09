@@ -20,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class LoginController {
 
-    @Autowird
+    @Autowired
     UserRepository userRepository;
 
     @Autowired

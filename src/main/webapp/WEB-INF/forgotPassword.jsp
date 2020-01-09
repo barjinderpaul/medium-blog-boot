@@ -22,7 +22,7 @@
             <hr class="colorgraph"><br>
             <input type="text" class="form-control" name="username" placeholder="Username" required=""/>
             <br>
-            <button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Forgot Password" type="Submit">Login</button>
+            <button class="btn btn-lg btn-primary btn-block"  name="Submit" value="Forgot Password" type="Submit">Submit</button>
         </form>
     </div>
 </div>
