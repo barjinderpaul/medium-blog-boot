@@ -1,7 +1,9 @@
 package com.blog.medium.controllers;
 
 import com.blog.medium.exceptions.InvalidArgumentException;
+import com.blog.medium.model.ConfirmationToken;
 import com.blog.medium.model.User;
+import com.blog.medium.repository.ConfirmationTokenRepository;
 import com.blog.medium.repository.RoleRepository;
 import com.blog.medium.repository.UserRepository;
 import com.blog.medium.services.UserService;
@@ -28,6 +30,9 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ConfirmationTokenRepository confirmationTokenRepository;
 
     @GetMapping("/login")
     public ModelAndView getLoginPage(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "logout",required = false) String logout){
@@ -139,23 +144,26 @@ public class LoginController {
         }
 
         String username = errorMessageOrUsername;
+        ConfirmationToken confirmationTokenOfUsername = confirmationTokenRepository.findByUser_Username(username);
         modelAndView.addObject("username",username);
         modelAndView.addObject("confirmUsername",username);
+        modelAndView.addObject("confirmationToken",confirmationTokenOfUsername.getConfirmationToken());
         modelAndView.setViewName("setNewPassword");
 
         return modelAndView;
     }
 
     @PostMapping("/forget-account-password")
-    public ModelAndView setPassword(@RequestParam("username")String username, @RequestParam("confirmUsername")String confirmUsername,@RequestParam("password") String password){
+    public ModelAndView setPassword(@RequestParam("username")String username, @RequestParam("confirmUsername")String confirmUsername,@RequestParam("password") String password, @RequestParam("confirmationToken") String confirmationToken){
 
         User user = userRepository.findByUsername(username);
         ModelAndView modelAndView = new ModelAndView();
+        String usernameFromConfirmationToken = confirmationTokenRepository.findByConfirmationToken(confirmationToken).getUser().getUsername();
         if(user == null ){
             modelAndView.addObject("message","Invalid User!");
             modelAndView.setViewName("error");
         }
-        else if( !(username.equals(confirmUsername))){
+        else if( !(username.equals(confirmUsername)) || !(username.equals(usernameFromConfirmationToken))){
             throw new InvalidArgumentException("Confirmation token is not valid for username : " + username);
         }
         else{
