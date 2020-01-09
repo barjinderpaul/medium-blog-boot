@@ -3,10 +3,8 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-<%@ page import="com.blog.medium.model.Post" %>
-<%@ page import="java.util.Arrays" %>
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
-<%@ page import="java.util.ArrayList" %><%--
+<%--
   Created by IntelliJ IDEA.
   User: barjinder
   Date: 21/12/19

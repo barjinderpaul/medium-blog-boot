@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import java.time.ZonedDateTime;
-
 @Getter
 @Setter
 public class ErrorMessage {

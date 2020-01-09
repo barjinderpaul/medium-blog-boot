@@ -1,7 +1,6 @@
 package com.blog.medium.services;
 
 import com.blog.medium.exceptions.InvalidArgumentException;
-import com.blog.medium.exceptions.NotFoundException;
 import com.blog.medium.model.ConfirmationToken;
 import com.blog.medium.model.Role;
 import com.blog.medium.model.User;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service

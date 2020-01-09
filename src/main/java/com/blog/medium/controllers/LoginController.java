@@ -9,17 +9,18 @@ import com.blog.medium.repository.UserRepository;
 import com.blog.medium.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+//import org.springframework.security.config.annotation.web.builders.WebSecurity;
+
 @RestController
 @Slf4j
 public class LoginController {
 
-    @Autowired
+    @Autowird
     UserRepository userRepository;
 
     @Autowired

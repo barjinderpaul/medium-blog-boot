@@ -1,9 +1,6 @@
 package com.blog.medium.repository;
 
-import com.blog.medium.model.Post;
 import com.blog.medium.model.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

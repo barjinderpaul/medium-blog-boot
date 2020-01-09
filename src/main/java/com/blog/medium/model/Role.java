@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import com.blog.medium.model.User;
 
 @Entity
 @Table(name = "roles")
